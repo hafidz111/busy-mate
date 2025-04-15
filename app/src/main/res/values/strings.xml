@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Busy Mate</string>
+    <string name="placeholder_search">Cari UMKM</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_chat">Chat</string>
+    <string name="menu_setting">Setting</string>
+    <string name="top_umkm">UMKM Unggulan</string>
+    <string name="list_umkm">Daftar UMKM</string>
+    <string name="back">Back</string>
+    <string name="tag_all">Semua</string>
+    <string name="tag_food">Makanan</string>
+    <string name="tag_craft">Kerajinan</string>
+    <string name="tag_fashion">Fashion</string>
+    <string name="tag_culinary">Kuliner</string>
+    <string name="tag_halal">Halal</string>
+    <string name="tag_batik">Batik</string>
+    <string name="tag_modern">Modern</string>
+    <string name="umkm_barokah">Warung Makan Barokah</string>
+    <string name="umkm_batik_modern">Batik Modern Collection</string>
+    <string name="category_makanan">Makanan</string>
+    <string name="category_fashion">Fashion</string>
+    <string name="location_jakarta">Jakarta</string>
+    <string name="location_bandung">Bandung</string>
+    <string name="umkm_not_found">UMKM tidak ditemukan.</string>
+    <string name="top_menu">Menu Unggulan</string>
+    <string name="contact">Kontak</string>
+    <string name="connect_umkm">Hubungi UMKM</string>
+    <string name="about_umkm">Tentang UMKM</string>
+</resources>

@@ -1,7 +1,6 @@
 package com.example.busymate.ui.screen.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.example.busymate.R
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.Search
-import com.example.busymate.ui.component.UMKMCardHorizontal
 import com.example.busymate.ui.component.UMKMCardVertical
 
 @Composable
@@ -99,30 +97,6 @@ fun HomeScreen(
                             onCategorySelected(category)
                         }
                     )
-                }
-            }
-        }
-
-        item {
-            Text(
-                text = stringResource(R.string.top_umkm),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
-
-        item {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(filteredUMKM) { umkm ->
-                    UMKMCardHorizontal(
-                        umkm = umkm,
-                        onClick = { onUMKMClick(umkm) },
-                    )
-
                 }
             }
         }

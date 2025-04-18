@@ -115,20 +115,6 @@ fun DetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(R.string.contact),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Column {
-                umkm.contact.forEach {
-                    Text(text = it)
-                }
-            }
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(

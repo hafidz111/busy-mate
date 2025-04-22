@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,7 +114,7 @@ fun ProfileUMKMScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row {
+                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
                     data.category.split(",").forEach {
                         CategoryChip(
                             category = Category(textCategory = it),

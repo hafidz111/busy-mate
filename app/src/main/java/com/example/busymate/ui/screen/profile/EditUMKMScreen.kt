@@ -5,21 +5,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,15 +27,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.example.busymate.R
+import com.example.busymate.ui.component.FormUMKM
 import com.example.busymate.utils.uploadImage
 import com.google.firebase.database.DatabaseError
 import kotlinx.coroutines.CoroutineScope
@@ -64,7 +56,7 @@ fun EditUMKMScreen(
     var contact by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var imageUMKM by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             selectedImageUri = uri
@@ -107,88 +99,24 @@ fun EditUMKMScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(12.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.LightGray)
-                    .clickable { imagePickerLauncher.launch("image/*") },
-                contentAlignment = Alignment.Center
-            ) {
-                if (selectedImageUri != null) {
-                    AsyncImage(
-                        model = selectedImageUri,
-                        contentDescription = stringResource(R.string.picture_umkm),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.matchParentSize()
-                    )
-                } else if (imageUMKM.isNotEmpty()) {
-                    AsyncImage(
-                        model = imageUMKM,
-                        contentDescription = stringResource(R.string.picture_umkm),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.matchParentSize()
-                    )
-                } else {
-                    Text(stringResource(R.string.choose_picture_umkm), color = Color.DarkGray)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = nameUMKM,
-                onValueChange = { nameUMKM = it },
-                label = { Text(stringResource(R.string.name_umkm)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            FormUMKM(
+                name = nameUMKM,
+                onNameChange = { nameUMKM = it },
+                location = location,
+                onLocationChange = { location = it },
+                category = category,
+                onCategoryChange = { category = it },
+                description = description,
+                onDescriptionChange = { description = it },
+                contact = contact,
+                onContactChange = { contact = it },
+                imageUrl = imageUMKM,
+                selectedImageUri = selectedImageUri,
+                onImageClick = { imagePickerLauncher.launch("image/*") }
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = { Text(stringResource(R.string.location)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = category,
-                onValueChange = { category = it },
-                label = { Text(stringResource(R.string.category_create)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text(stringResource(R.string.description)) },
-                modifier = Modifier.fillMaxWidth(),
-                maxLines = 3
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = contact,
-                onValueChange = { contact = it },
-                label = { Text(stringResource(R.string.no_whatsapp)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
@@ -256,7 +184,9 @@ fun EditUMKMScreen(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
             ) {
                 Text(stringResource(R.string.save))
             }

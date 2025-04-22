@@ -18,7 +18,7 @@ import coil3.compose.AsyncImage
 import com.example.busymate.model.UMKM
 
 @Composable
-fun UMKMCardVertical(
+fun UMKMCard(
     umkm: UMKM,
     onClick: () -> Unit,
     modifier: Modifier = Modifier

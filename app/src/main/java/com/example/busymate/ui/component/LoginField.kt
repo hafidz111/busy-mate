@@ -70,7 +70,8 @@ fun LoginField(
             ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val image =
+                    if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 val description = if (passwordVisible) "Sembunyikan password" else "Lihat password"
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {

@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Store
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import com.example.busymate.R
 import com.example.busymate.ui.component.ProfileCard
 import com.example.busymate.ui.component.SettingListItem
 
@@ -28,21 +29,21 @@ fun SettingScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        SettingListItem (
+        SettingListItem(
             icon = Icons.Default.Store,
-            title = "Profile UMKM",
+            title = stringResource(R.string.profile_umkm),
             onClick = onProfileUMKM
         )
 
         SettingListItem(
             icon = Icons.AutoMirrored.Filled.ExitToApp,
-            title = "Logout",
+            title = stringResource(R.string.logout),
             onClick = {
-                val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                val sharedPreferences =
+                    context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 sharedPreferences.edit {
                     remove("is_logged_in")
                 }
-
                 onLogout()
             }
         )

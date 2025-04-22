@@ -1,5 +1,8 @@
 package com.example.busymate.ui.screen.profile
 
+import android.annotation.SuppressLint
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,15 +39,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.example.busymate.R
 import com.example.busymate.model.Category
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.ProductCard
 import com.google.firebase.database.DatabaseError
 
+@SuppressLint("UseKtx")
 @Composable
 fun ProfileUMKMScreen(
     modifier: Modifier = Modifier,
@@ -80,6 +86,9 @@ fun ProfileUMKMScreen(
         }
     } else {
         umkmData?.let { data ->
+            val imageUri = remember(data.imageUMKM) {
+                runCatching { Uri.parse(data.imageUMKM) }.getOrNull()
+            }
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -87,7 +96,7 @@ fun ProfileUMKMScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 AsyncImage(
-                    model = data.imageUMKM,
+                    model = imageUri,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -95,10 +104,11 @@ fun ProfileUMKMScreen(
                         .height(200.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
+                Log.d("UMKM", "Image URL: ${data.imageUMKM}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(data.nameUMKM , fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(data.nameUMKM, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Text(data.location, fontSize = 16.sp, color = Color.Gray)
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -115,15 +125,15 @@ fun ProfileUMKMScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text("Deskripsi", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.description), fontWeight = FontWeight.Bold)
                 Text(data.description)
 
-                Text("No. WhatsApp", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.no_whatsapp), fontWeight = FontWeight.Bold)
                 Text(data.contact)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("Produk", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.product), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 LazyRow {
                     items(data.products) { product ->
                         ProductCard(product = product)
@@ -134,11 +144,11 @@ fun ProfileUMKMScreen(
 
                 Button(
                     onClick = {
-                        navController.navigate("EditUMKM")
+                        navController.navigate("edit_umkm/${data.id}")
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Edit Toko")
+                    Text(stringResource(R.string.edit))
                 }
             }
         } ?: run {
@@ -149,12 +159,12 @@ fun ProfileUMKMScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text("Belum ada data toko.")
+                Text(stringResource(R.string.empty_store))
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
-                    navController.navigate("CreateUMKM")
+                    navController.navigate("create_umkm")
                 }) {
-                    Text("Buat Toko")
+                    Text(stringResource(R.string.register_umkm))
                 }
             }
         }

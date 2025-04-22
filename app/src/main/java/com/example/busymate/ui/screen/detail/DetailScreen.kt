@@ -2,6 +2,7 @@ package com.example.busymate.ui.screen.detail
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +55,8 @@ import com.google.firebase.database.ValueEventListener
 
 @Composable
 fun DetailScreen(
-    umkmId: Int
+    umkmId: String,
+    nameUMKM: String
 ) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance().reference
@@ -64,7 +66,7 @@ fun DetailScreen(
     LaunchedEffect(umkmId) {
         database.child("umkm")
             .orderByChild("id")
-            .equalTo(umkmId.toDouble())
+            .equalTo(umkmId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -99,8 +101,22 @@ fun DetailScreen(
         return
     }
 
-    fun openWhatsApp(context: Context, phoneNumber: String) {
-        val uri = "https://wa.me/$phoneNumber".toUri()
+    fun openWhatsApp(
+        context: Context,
+        rawPhone: String,
+        message: String = context.getString(R.string.message_chat)
+    ) {
+        val digits = rawPhone.filter { it.isDigit() }
+        val withCountryCode = when {
+            digits.startsWith("0") -> "62" + digits.drop(1)
+            digits.startsWith("62") -> digits
+            else -> "62$digits"
+        }
+
+        val encodedMessage = Uri.encode(message)
+
+        val uri = "https://wa.me/$withCountryCode?text=$encodedMessage".toUri()
+
         val intent = Intent(Intent.ACTION_VIEW, uri)
         context.startActivity(intent)
     }
@@ -120,7 +136,11 @@ fun DetailScreen(
         )
 
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(umkm!!.nameUMKM, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(
+                nameUMKM,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
             Text(umkm!!.location, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -140,11 +160,19 @@ fun DetailScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Deskripsi", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.description),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
             Text(umkm!!.description, style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Produk", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.product),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
 
             if (umkm!!.products.isNotEmpty()) {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -153,15 +181,22 @@ fun DetailScreen(
                     }
                 }
             } else {
-                Text("Belum ada produk.", color = Color.Gray)
+                Text(stringResource(R.string.empty_product), color = Color.Gray)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
-                    umkm?.contact?.let { phone ->
-                        openWhatsApp(context, phone)
+                    if (umkm?.contact.isNullOrEmpty()) {
+                        Toast.makeText(context, "Nomor WhatsApp tidak tersedia", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        openWhatsApp(
+                            context = context,
+                            rawPhone = umkm!!.contact,
+                            message = context.getString(R.string.message_send, umkm!!.nameUMKM)
+                        )
                     }
                 },
                 modifier = Modifier
@@ -171,7 +206,7 @@ fun DetailScreen(
             ) {
                 Icon(Icons.Default.Phone, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Hubungi via WhatsApp")
+                Text(stringResource(R.string.connect))
             }
         }
     }

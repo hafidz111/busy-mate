@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,11 +54,11 @@ fun LoginScreen(
 
     fun validateInput(emailInput: String, passwordInput: String) {
         emailError = if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
-            "Email tidak valid"
+            context.getString(R.string.email_not_valid)
         } else null
 
         passwordError = if (passwordInput.length < 8) {
-            "Password minimal 8 karakter"
+            context.getString(R.string.password_not_valid)
         } else null
     }
 
@@ -70,11 +71,12 @@ fun LoginScreen(
                 .addOnCompleteListener { task ->
                     isLoading = false
                     if (task.isSuccessful) {
-                        val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        val sharedPreferences =
+                            context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                         sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
                         onLoginSuccess()
                     } else {
-                        passwordError = "Email atau password salah"
+                        passwordError = context.getString(R.string.email_or_password_not_valid)
                     }
                 }
         }
@@ -115,7 +117,7 @@ fun LoginScreen(
                 Text(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),
-                    text = "Login",
+                    text = stringResource(R.string.login),
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold
@@ -124,7 +126,7 @@ fun LoginScreen(
                 Text(
                     modifier = Modifier
                         .padding(top = 20.dp, start = 12.dp),
-                    text = "Lets Get Started",
+                    text = stringResource(R.string.lets_get_started),
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold
@@ -164,7 +166,7 @@ fun LoginScreen(
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
     BusyMateTheme {

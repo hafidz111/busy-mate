@@ -13,16 +13,26 @@ import androidx.compose.runtime.setValue
 @Composable
 fun WelcomeApp() {
     val context = LocalContext.current
-    val sharedPreferences = remember { context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE) }
-    var isLoggedIn by remember { mutableStateOf(sharedPreferences.getBoolean("is_logged_in", false)) }
+    val sharedPreferences =
+        remember { context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE) }
+    var isLoggedIn by remember {
+        mutableStateOf(
+            sharedPreferences.getBoolean(
+                "is_logged_in",
+                false
+            )
+        )
+    }
 
     if (!isLoggedIn) {
-        LoginScreen(onLoginSuccess = {
-            sharedPreferences.edit {
-                putBoolean("is_logged_in", true)
+        LoginScreen(
+            onLoginSuccess = {
+                sharedPreferences.edit {
+                    putBoolean("is_logged_in", true)
+                }
+                isLoggedIn = true
             }
-            isLoggedIn = true
-        })
+        )
     } else {
         BusyMateApp(
             onLogout = {

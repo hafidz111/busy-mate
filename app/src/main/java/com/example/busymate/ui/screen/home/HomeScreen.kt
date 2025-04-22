@@ -60,7 +60,7 @@ fun HomeScreen(
         database.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<Category>()
-                list.add(Category(id = 0, textCategory = "Semua"))
+                list.add(Category(id = 0, textCategory = context.getString(R.string.tag_all)))
 
                 for (catSnap in snapshot.children) {
                     val category = catSnap.getValue(Category::class.java)
@@ -98,7 +98,7 @@ fun HomeScreen(
 
     val filteredUMKM = umkmList.filter { umkm ->
         val categoryMatch = selectedCategory?.textCategory?.let {
-            if (it.equals("Semua", true)) true
+            if (it.equals(stringResource(R.string.tag_all), true)) true
             else umkm.category.contains(it, ignoreCase = true)
         } ?: true
 
@@ -167,14 +167,14 @@ fun HomeScreen(
         } else if (filteredUMKM.isEmpty()) {
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(text = "Belum ada UMKM", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = stringResource(R.string.empty_umkm), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         } else {
             items(filteredUMKM) { umkm ->
                 UMKMCardVertical(
                     umkm = umkm,
-                    onClick = { navController.navigate("DetailUMKM/${umkm.id}") },
+                    onClick = { navController.navigate("detail/${umkm.id}/${umkm.nameUMKM}") },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }

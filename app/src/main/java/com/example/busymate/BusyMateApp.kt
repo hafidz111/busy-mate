@@ -25,6 +25,8 @@ import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
 import com.example.busymate.ui.screen.login.LoginScreen
 import com.example.busymate.ui.screen.profile.ProfileUMKMScreen
+import com.example.busymate.ui.screen.profile.CreateUMKMScreen
+import com.example.busymate.ui.screen.profile.EditUMKMScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 
 @Composable
@@ -59,9 +61,9 @@ fun BusyMateApp(
                     }
 
                     Screen.Detail.route -> {
-                        val userName = navBackStackEntry?.arguments?.getString("userName") ?: ""
+                        val nameUMKM = navBackStackEntry?.arguments?.getString("nameUMKM") ?: ""
                         TopBar(
-                            title = userName,
+                            title = nameUMKM,
                             navController = navController,
                             showBackButton = true
                         )
@@ -74,11 +76,35 @@ fun BusyMateApp(
                             showBackButton = false
                         )
                     }
+
+                    Screen.ProfileUMKM.route -> {
+                        TopBar(
+                            title = stringResource(R.string.profile_umkm),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
+
+                    Screen.CreateUMKM.route -> {
+                        TopBar(
+                            title = stringResource(R.string.create_umkm),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
+
+                    Screen.EditUMKM.route -> {
+                        TopBar(
+                            title = stringResource(R.string.edit_umkm),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
                 }
             }
         },
         bottomBar = {
-            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Login.route) {
+            if (currentRoute == Screen.Home.route || currentRoute == Screen.Board.route || currentRoute == Screen.Setting.route) {
                 BottomNavigationBar(navController)
             }
         },
@@ -123,14 +149,33 @@ fun BusyMateApp(
             }
             composable(
                 route = Screen.Detail.route,
-                arguments = listOf(navArgument("umkmId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val umkmId = backStackEntry.arguments?.getInt("umkmId") ?: -1
-                DetailScreen(umkmId = umkmId)
+                arguments = listOf(
+                    navArgument("umkmId") { type = NavType.StringType },
+                    navArgument("nameUMKM") { type = NavType.StringType }
+                )
+            ) { backStack ->
+                val id = backStack.arguments?.getString("umkmId") ?: return@composable
+                val nameUMKM = backStack.arguments?.getString("nameUMKM") ?: ""
+                DetailScreen(umkmId = id, nameUMKM = nameUMKM)
             }
             composable(Screen.ProfileUMKM.route) {
                 ProfileUMKMScreen(
-                    modifier = Modifier,
+                    navController = navController
+                )
+            }
+            composable(Screen.CreateUMKM.route) {
+                CreateUMKMScreen(
+                    onCreateSuccess = { navController.popBackStack() },
+                    modifier = Modifier
+                )
+            }
+            composable(
+                route = Screen.EditUMKM.route,
+                arguments = listOf(navArgument("umkmId") { type = NavType.StringType })
+            ) { backStack ->
+                val id = backStack.arguments?.getString("umkmId") ?: return@composable
+                EditUMKMScreen(
+                    umkmId = id,
                     navController = navController
                 )
             }

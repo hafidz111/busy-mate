@@ -34,9 +34,9 @@ fun BottomNavigationBar(
             screen = Screen.Home
         ),
         NavigationItem(
-            title = stringResource(R.string.menu_chat),
+            title = stringResource(R.string.menu_board),
             icon = Icons.Default.Email,
-            screen = Screen.Chat
+            screen = Screen.Board
         ),
         NavigationItem(
             title = stringResource(R.string.menu_setting),
@@ -69,7 +69,7 @@ fun BottomNavigationBar(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = if (selected) MaterialTheme.colorScheme.primary
+                        tint = if (selected) MaterialTheme.colorScheme.background
                         else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },

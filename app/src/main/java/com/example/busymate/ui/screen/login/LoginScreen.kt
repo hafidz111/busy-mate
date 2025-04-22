@@ -1,5 +1,7 @@
 package com.example.busymate.ui.screen.login
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,13 +33,17 @@ import com.example.busymate.R
 import com.example.busymate.ui.component.LoginField
 import com.example.busymate.ui.theme.BusyMateTheme
 
+@SuppressLint("UseKtx")
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
-
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    onLoginSuccess: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     fun validateInput(emailInput: String, passwordInput: String) {
         emailError = if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
@@ -91,7 +98,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
             Text(
                 modifier = Modifier
-                    .padding(top = 20.dp),
+                    .padding(top = 20.dp, start = 12.dp),
                 text = "Lets Get Started",
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 25.sp,
@@ -111,7 +118,11 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                     password = it
                     validateInput(email, it)
                 },
-                onLoginClick = {}
+                onLoginClick = {
+                    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
+                    onLoginSuccess()
+                }
             )
         }
     }
@@ -121,6 +132,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginScreenPreview() {
     BusyMateTheme {
-        LoginScreen(modifier = Modifier.background(Color.Blue))
+        LoginScreen(modifier = Modifier.background(Color.Blue), onLoginSuccess = {})
     }
 }

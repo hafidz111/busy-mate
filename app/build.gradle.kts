@@ -61,5 +61,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(platform(libs.firebase.bom))
-
+    implementation(libs.androidx.material.icons.extended)
 }

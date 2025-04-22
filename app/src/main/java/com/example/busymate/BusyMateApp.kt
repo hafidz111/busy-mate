@@ -20,9 +20,10 @@ import androidx.navigation.navArgument
 import com.example.busymate.ui.component.BottomNavigationBar
 import com.example.busymate.ui.component.TopBar
 import com.example.busymate.ui.navigation.Screen
-import com.example.busymate.ui.screen.chat.ChatScreen
+import com.example.busymate.ui.screen.board.BoardScreen
 import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
+import com.example.busymate.ui.screen.login.LoginScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 
 @Composable
@@ -43,17 +44,15 @@ fun BusyMateApp(
                     Screen.Home.route -> {
                         TopBar(
                             title = stringResource(R.string.app_name),
-                            showBackButton = false,
-                            showProfileButton = true
+                            showBackButton = false
                         )
                     }
 
-                    Screen.Chat.route -> {
+                    Screen.Board.route -> {
                         TopBar(
-                            title = stringResource(R.string.menu_chat),
+                            title = stringResource(R.string.menu_board),
                             navController = navController,
-                            showBackButton = false,
-                            showProfileButton = false
+                            showBackButton = false
                         )
                     }
 
@@ -62,8 +61,7 @@ fun BusyMateApp(
                         TopBar(
                             title = userName,
                             navController = navController,
-                            showBackButton = true,
-                            showProfileButton = false
+                            showBackButton = true
                         )
                     }
 
@@ -71,8 +69,7 @@ fun BusyMateApp(
                         TopBar(
                             title = stringResource(R.string.menu_setting),
                             navController = navController,
-                            showBackButton = false,
-                            showProfileButton = false
+                            showBackButton = false
                         )
                     }
                 }
@@ -90,6 +87,15 @@ fun BusyMateApp(
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(Screen.Home.route) {
                 HomeScreen(
                     onUMKMClick = { umkm ->
@@ -97,13 +103,19 @@ fun BusyMateApp(
                     }
                 )
             }
-            composable(Screen.Chat.route) {
-                ChatScreen(
+            composable(Screen.Board.route) {
+                BoardScreen(
 
                 )
             }
             composable(Screen.Setting.route) {
-                SettingScreen()
+                SettingScreen(
+                    onLogout = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(
                 route = Screen.Detail.route,

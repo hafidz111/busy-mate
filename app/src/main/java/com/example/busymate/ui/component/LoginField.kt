@@ -52,7 +52,7 @@ fun LoginField(
                 keyboardType = KeyboardType.Email
             ),
             modifier = modifier
-                .padding(8.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             singleLine = true
         )

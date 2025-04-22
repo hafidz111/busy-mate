@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.busymate.R
 import com.example.busymate.ui.component.LoginField
 import com.example.busymate.ui.theme.BusyMateTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UseKtx")
 @Composable
@@ -43,7 +46,10 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val firebaseAuth = FirebaseAuth.getInstance()
 
     fun validateInput(emailInput: String, passwordInput: String) {
         emailError = if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
@@ -55,75 +61,105 @@ fun LoginScreen(
         } else null
     }
 
-    Card(
-        modifier = modifier
-            .padding(top = 80.dp)
-            .fillMaxSize(),
-        shape = RoundedCornerShape(
-            topStart = 20.dp,
-            topEnd = 20.dp,
-            bottomStart = 0.dp,
-            bottomEnd = 0.dp
-        ),
-        elevation = CardDefaults.elevatedCardElevation(200.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        )
-    ) {
+    fun handleLogin() {
+        validateInput(email, password)
 
-        Column(
+        if (emailError == null && passwordError == null) {
+            isLoading = true
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    isLoading = false
+                    if (task.isSuccessful) {
+                        val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
+                        onLoginSuccess()
+                    } else {
+                        passwordError = "Email atau password salah"
+                    }
+                }
+        }
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Card(
             modifier = modifier
-                .fillMaxSize()
-                .background(Color.White)
+                .padding(top = 80.dp)
+                .fillMaxSize(),
+            shape = RoundedCornerShape(
+                topStart = 20.dp,
+                topEnd = 20.dp,
+                bottomStart = 0.dp,
+                bottomEnd = 0.dp
+            ),
+            elevation = CardDefaults.elevatedCardElevation(200.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
         ) {
 
-            Image(
-                painter = painterResource(R.drawable.login),
-                contentDescription = "Login Image",
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(250.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(16.dp))
-            )
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
 
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                text = "Login",
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold
-            )
+                Image(
+                    painter = painterResource(R.drawable.login),
+                    contentDescription = "Login Image",
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .size(250.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clip(RoundedCornerShape(16.dp))
+                )
 
-            Text(
-                modifier = Modifier
-                    .padding(top = 20.dp, start = 12.dp),
-                text = "Lets Get Started",
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold
-            )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                    text = "Login",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
-            LoginField(
-                email = email,
-                password = password,
-                emailError = emailError,
-                passwordError = passwordError,
-                onEmailChange = {
-                    email = it
-                    validateInput(it, password)
-                },
-                onPasswordChange = {
-                    password = it
-                    validateInput(email, it)
-                },
-                onLoginClick = {
-                    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                    sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
-                    onLoginSuccess()
-                }
-            )
+                Text(
+                    modifier = Modifier
+                        .padding(top = 20.dp, start = 12.dp),
+                    text = "Lets Get Started",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                LoginField(
+                    email = email,
+                    password = password,
+                    emailError = emailError,
+                    passwordError = passwordError,
+                    onEmailChange = {
+                        email = it
+                        validateInput(it, password)
+                    },
+                    onPasswordChange = {
+                        password = it
+                        validateInput(email, it)
+                    },
+                    onLoginClick = {
+                        handleLogin()
+                    }
+                )
+            }
+        }
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f))
+                    .align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ import com.example.busymate.ui.screen.setting.SettingScreen
 @Composable
 fun BusyMateApp(
     modifier: Modifier = Modifier,
+    onLogout: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -76,7 +77,7 @@ fun BusyMateApp(
             }
         },
         bottomBar = {
-            if (currentRoute != Screen.Detail.route) {
+            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Login.route) {
                 BottomNavigationBar(navController)
             }
         },
@@ -111,6 +112,7 @@ fun BusyMateApp(
             composable(Screen.Setting.route) {
                 SettingScreen(
                     onLogout = {
+                        onLogout()
                         navController.navigate(Screen.Login.route) {
                             popUpTo(0) { inclusive = true }
                         }

@@ -24,6 +24,13 @@ fun WelcomeApp() {
             isLoggedIn = true
         })
     } else {
-        BusyMateApp()
+        BusyMateApp(
+            onLogout = {
+                sharedPreferences.edit {
+                    putBoolean("is_logged_in", false)
+                }
+                isLoggedIn = false
+            }
+        )
     }
 }

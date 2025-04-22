@@ -1,6 +1,7 @@
 package com.example.busymate.ui.screen.profile
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,7 +42,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.busymate.R
+import com.example.busymate.utils.uploadImage
 import com.google.firebase.database.DatabaseError
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun EditUMKMScreen(
@@ -113,15 +119,22 @@ fun EditUMKMScreen(
                     .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
-                if (imageUMKM.isEmpty()) {
-                    Text(stringResource(R.string.choose_picture_umkm), color = Color.DarkGray)
-                } else {
+                if (selectedImageUri != null) {
+                    AsyncImage(
+                        model = selectedImageUri,
+                        contentDescription = stringResource(R.string.picture_umkm),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
+                } else if (imageUMKM.isNotEmpty()) {
                     AsyncImage(
                         model = imageUMKM,
                         contentDescription = stringResource(R.string.picture_umkm),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.matchParentSize()
                     )
+                } else {
+                    Text(stringResource(R.string.choose_picture_umkm), color = Color.DarkGray)
                 }
             }
 
@@ -179,28 +192,69 @@ fun EditUMKMScreen(
 
             Button(
                 onClick = {
-                    val updatedUMKM = UMKM(
-                        id = umkmId,
-                        nameUMKM = nameUMKM,
-                        location = location,
-                        description = description,
-                        contact = contact,
-                        category = category,
-                        imageUMKM = imageUMKM,
-                        products = umkmData?.products ?: emptyList()
-                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val imageUrl = if (selectedImageUri != null) {
+                                uploadImage(selectedImageUri!!, context, imageUMKM)
+                            } else {
+                                imageUMKM
+                            }
 
-                    database.child("umkm").child(umkmId)
-                        .setValue(updatedUMKM)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "UMKM berhasil diperbarui", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.popBackStack()
+                            if (imageUrl == null) {
+                                Log.e("CreateUMKM", "uploadImage returned null")
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        "Gagal upload gambar",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                return@launch
+                            }
+                            Log.d("CreateUMKM", "Received imageUrl: $imageUrl")
+
+                            val updatedUMKM = UMKM(
+                                id = umkmId,
+                                nameUMKM = nameUMKM,
+                                location = location,
+                                description = description,
+                                contact = contact,
+                                category = category,
+                                imageUMKM = imageUrl,
+                                products = umkmData?.products ?: emptyList()
+                            )
+
+                            withContext(Dispatchers.Main) {
+                                database.child("umkm").child(umkmId)
+                                    .setValue(updatedUMKM)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(
+                                            context,
+                                            "UMKM berhasil diperbarui",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        navController.popBackStack()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(
+                                            context,
+                                            "Gagal memperbarui UMKM",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                            }
+
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "Terjadi kesalahan: ${e.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                Log.e("EditUMKMScreen", "Error updating UMKM", e)
+                            }
                         }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Gagal memperbarui UMKM", Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

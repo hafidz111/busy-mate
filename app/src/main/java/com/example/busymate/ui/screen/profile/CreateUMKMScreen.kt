@@ -39,8 +39,13 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.busymate.R
 import com.example.busymate.model.UMKM
+import com.example.busymate.utils.uploadImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CreateUMKMScreen(
@@ -140,27 +145,50 @@ fun CreateUMKMScreen(
             onClick = {
                 val uid = user?.uid ?: return@Button
 
-                val newUMKM = UMKM(
-                    id = uid,
-                    imageUMKM = selectedImageUri.toString(),
-                    nameUMKM = name,
-                    contact = contact,
-                    location = location,
-                    category = category,
-                    description = description,
-                    tags = category.split(",").map { it.trim() },
-                    products = emptyList()
-                )
+                if (selectedImageUri == null) {
+                    Toast.makeText(context, "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT)
+                        .show()
+                    return@Button
+                }
 
-                database.child("umkm").child(uid).setValue(newUMKM)
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "UMKM berhasil didaftarkan", Toast.LENGTH_SHORT)
-                            .show()
-                        onCreateSuccess()
+                CoroutineScope(Dispatchers.IO).launch {
+                    val imageUrl = uploadImage(selectedImageUri!!, context)
+                    if (imageUrl == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Gagal upload gambar", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        return@launch
                     }
-                    .addOnFailureListener {
-                        Toast.makeText(context, "Gagal mendaftar UMKM", Toast.LENGTH_SHORT).show()
+
+                    val newUMKM = UMKM(
+                        id = uid,
+                        imageUMKM = imageUrl,
+                        nameUMKM = name,
+                        contact = contact,
+                        location = location,
+                        category = category,
+                        description = description,
+                        tags = category.split(",").map { it.trim() },
+                        products = emptyList()
+                    )
+
+                    withContext(Dispatchers.Main) {
+                        database.child("umkm").child(uid).setValue(newUMKM)
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    context,
+                                    "UMKM berhasil didaftarkan",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onCreateSuccess()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Gagal mendaftar UMKM", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                     }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {

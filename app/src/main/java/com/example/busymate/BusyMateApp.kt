@@ -24,6 +24,7 @@ import com.example.busymate.ui.screen.board.BoardScreen
 import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
 import com.example.busymate.ui.screen.login.LoginScreen
+import com.example.busymate.ui.screen.profile.ProfileUMKMScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 
 @Composable
@@ -99,9 +100,7 @@ fun BusyMateApp(
             }
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onUMKMClick = { umkm ->
-                        navController.navigate(Screen.Detail.createRoute(umkm.id))
-                    }
+                    navController = navController
                 )
             }
             composable(Screen.Board.route) {
@@ -116,6 +115,9 @@ fun BusyMateApp(
                         navController.navigate(Screen.Login.route) {
                             popUpTo(0) { inclusive = true }
                         }
+                    },
+                    onProfileUMKM = {
+                        navController.navigate("profile_umkm")
                     }
                 )
             }
@@ -125,6 +127,12 @@ fun BusyMateApp(
             ) { backStackEntry ->
                 val umkmId = backStackEntry.arguments?.getInt("umkmId") ?: -1
                 DetailScreen(umkmId = umkmId)
+            }
+            composable(Screen.ProfileUMKM.route) {
+                ProfileUMKMScreen(
+                    modifier = Modifier,
+                    navController = navController
+                )
             }
         }
     }

@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.example.busymate.model.MenuItem
+import com.example.busymate.model.ProductItem
 
 @Composable
-fun MenuCardItem(menu: MenuItem, modifier: Modifier = Modifier) {
+fun ProductCard(product: ProductItem, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .width(150.dp)
@@ -34,8 +34,8 @@ fun MenuCardItem(menu: MenuItem, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(8.dp)
         ) {
             AsyncImage(
-                model = menu.image,
-                contentDescription = menu.name,
+                model = product.image,
+                contentDescription = product.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -44,14 +44,14 @@ fun MenuCardItem(menu: MenuItem, modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = menu.name,
+                text = product.name,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Rp ${menu.price}",
+                text = "Rp ${product.price}",
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall
             )

@@ -1,34 +1,42 @@
 package com.example.busymate.ui.screen.setting
 
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Store
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import com.example.busymate.ui.component.ProfileCard
+import com.example.busymate.ui.component.SettingListItem
 
 @Composable
 fun SettingScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onProfileUMKM: () -> Unit
 ) {
     val context = LocalContext.current
+    Column(modifier = Modifier.fillMaxSize()) {
+        ProfileCard()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
-    ) {
-        Button(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SettingListItem (
+            icon = Icons.Default.Store,
+            title = "Profile UMKM",
+            onClick = onProfileUMKM
+        )
+
+        SettingListItem(
+            icon = Icons.AutoMirrored.Filled.ExitToApp,
+            title = "Logout",
             onClick = {
                 val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 sharedPreferences.edit {
@@ -36,11 +44,7 @@ fun SettingScreen(
                 }
 
                 onLogout()
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Logout", color = Color.White)
-        }
+            }
+        )
     }
 }

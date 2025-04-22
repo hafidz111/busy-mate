@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.busymate.model.UMKM
@@ -34,8 +33,8 @@ fun UMKMCardVertical(
     ) {
         Column {
             AsyncImage(
-                model = umkm.image,
-                contentDescription = stringResource(id = umkm.name),
+                model = umkm.imageUMKM,
+                contentDescription = umkm.nameUMKM,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
@@ -43,15 +42,15 @@ fun UMKMCardVertical(
             )
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = stringResource(id = umkm.name),
+                    text = umkm.nameUMKM,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = stringResource(id = umkm.category),
+                    text = umkm.category,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = stringResource(id = umkm.location),
+                    text = umkm.location,
                     style = MaterialTheme.typography.bodySmall
                 )
             }

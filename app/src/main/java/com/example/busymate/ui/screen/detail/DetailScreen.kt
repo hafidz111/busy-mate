@@ -31,10 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,51 +43,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.busymate.R
-import com.example.busymate.model.UMKM
+import com.example.busymate.data.UMKMRepository
+import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.ProductCard
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun DetailScreen(
     umkmId: String,
-    nameUMKM: String
+    nameUMKM: String,
+    viewModel: DetailViewModel = viewModel(
+        factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
+    )
 ) {
     val context = LocalContext.current
-    val database = FirebaseDatabase.getInstance().reference
-    var umkm by remember { mutableStateOf<UMKM?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
+    val umkm by viewModel.umkm.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     LaunchedEffect(umkmId) {
-        database.child("umkm")
-            .orderByChild("id")
-            .equalTo(umkmId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (child in snapshot.children) {
-                            umkm = child.getValue(UMKM::class.java)
-                            break
-                        }
-                    }
-                    isLoading = false
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(context, "Gagal memuat data", Toast.LENGTH_SHORT).show()
-                    isLoading = false
-                }
-            })
+        viewModel.getUMKMById(umkmId)
     }
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
+        return
+    }
+
+    if (!errorMessage.isNullOrEmpty()) {
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         return
     }
 

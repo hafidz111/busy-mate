@@ -43,8 +43,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditUMKMScreen(
-    umkmId: String,
-    navController: NavController
+    umkmId: String, navController: NavController
 ) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance().reference
@@ -64,34 +63,31 @@ fun EditUMKMScreen(
 
     LaunchedEffect(umkmId) {
         database.child("umkm").child(umkmId)
-            .addListenerForSingleValueEvent(
-                object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val data = snapshot.getValue(UMKM::class.java)
-                        if (data != null) {
-                            umkmData = data
-                            nameUMKM = data.nameUMKM
-                            location = data.location
-                            description = data.description
-                            contact = data.contact
-                            category = data.category
-                            imageUMKM = data.imageUMKM
-                        }
-                        isLoading = false
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val data = snapshot.getValue(UMKM::class.java)
+                    if (data != null) {
+                        umkmData = data
+                        nameUMKM = data.nameUMKM
+                        location = data.location
+                        description = data.description
+                        contact = data.contact
+                        category = data.category
+                        imageUMKM = data.imageUMKM
                     }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(context, "Gagal memuat data UMKM", Toast.LENGTH_SHORT).show()
-                        isLoading = false
-                    }
+                    isLoading = false
                 }
-            )
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(context, "Gagal memuat data UMKM", Toast.LENGTH_SHORT).show()
+                    isLoading = false
+                }
+            })
     }
 
     if (isLoading) {
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
@@ -115,8 +111,7 @@ fun EditUMKMScreen(
                 onContactChange = { contact = it },
                 imageUrl = imageUMKM,
                 selectedImageUri = selectedImageUri,
-                onImageClick = { imagePickerLauncher.launch("image/*") }
-            )
+                onImageClick = { imagePickerLauncher.launch("image/*") })
 
             Button(
                 onClick = {
@@ -132,9 +127,7 @@ fun EditUMKMScreen(
                                 Log.e("CreateUMKM", "uploadImage returned null")
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(
-                                        context,
-                                        "Gagal upload gambar",
-                                        Toast.LENGTH_SHORT
+                                        context, "Gagal upload gambar", Toast.LENGTH_SHORT
                                     ).show()
                                 }
                                 return@launch
@@ -153,21 +146,15 @@ fun EditUMKMScreen(
                             )
 
                             withContext(Dispatchers.Main) {
-                                database.child("umkm").child(umkmId)
-                                    .setValue(updatedUMKM)
+                                database.child("umkm").child(umkmId).setValue(updatedUMKM)
                                     .addOnSuccessListener {
                                         Toast.makeText(
-                                            context,
-                                            "UMKM berhasil diperbarui",
-                                            Toast.LENGTH_SHORT
+                                            context, "UMKM berhasil diperbarui", Toast.LENGTH_SHORT
                                         ).show()
                                         navController.popBackStack()
-                                    }
-                                    .addOnFailureListener {
+                                    }.addOnFailureListener {
                                         Toast.makeText(
-                                            context,
-                                            "Gagal memperbarui UMKM",
-                                            Toast.LENGTH_SHORT
+                                            context, "Gagal memperbarui UMKM", Toast.LENGTH_SHORT
                                         ).show()
                                     }
                             }
@@ -175,16 +162,13 @@ fun EditUMKMScreen(
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
-                                    context,
-                                    "Terjadi kesalahan: ${e.message}",
-                                    Toast.LENGTH_LONG
+                                    context, "Terjadi kesalahan: ${e.message}", Toast.LENGTH_LONG
                                 ).show()
                                 Log.e("EditUMKMScreen", "Error updating UMKM", e)
                             }
                         }
                     }
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
             ) {

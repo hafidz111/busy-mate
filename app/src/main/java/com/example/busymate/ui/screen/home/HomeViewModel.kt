@@ -36,12 +36,7 @@ class HomeViewModel(private val repository: UMKMRepository) : ViewModel() {
         _selectedCategory.value = category
     }
 
-    init {
-        fetchCategories()
-        fetchUMKM()
-    }
-
-    private fun fetchCategories() {
+    fun fetchCategories() {
         viewModelScope.launch {
             repository.getCategories().collect { result ->
                 result.onSuccess { list ->
@@ -54,7 +49,7 @@ class HomeViewModel(private val repository: UMKMRepository) : ViewModel() {
         }
     }
 
-    private fun fetchUMKM() {
+    fun fetchUMKM() {
         viewModelScope.launch {
             _isLoading.value = true
             repository.getUMKM().collect { result ->

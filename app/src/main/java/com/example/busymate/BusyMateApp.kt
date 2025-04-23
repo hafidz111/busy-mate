@@ -135,7 +135,7 @@ fun BusyMateApp(
                         navController.navigate("login") {
                             popUpTo(Screen.Register.route) { inclusive = true }
                         }
-                }
+                    }
                 )
             }
             composable(Screen.Home.route) {

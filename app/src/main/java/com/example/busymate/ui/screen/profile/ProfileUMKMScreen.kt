@@ -54,8 +54,7 @@ import com.google.firebase.database.DatabaseError
 @SuppressLint("UseKtx")
 @Composable
 fun ProfileUMKMScreen(
-    modifier: Modifier = Modifier,
-    navController: NavController
+    modifier: Modifier = Modifier, navController: NavController
 ) {
     val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
@@ -119,8 +118,7 @@ fun ProfileUMKMScreen(
                         CategoryChip(
                             category = Category(textCategory = it),
                             isSelected = false,
-                            onClick = {}
-                        )
+                            onClick = {})
                     }
                 }
 
@@ -134,7 +132,9 @@ fun ProfileUMKMScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(stringResource(R.string.product), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.product), fontSize = 18.sp, fontWeight = FontWeight.Bold
+                )
                 if (data.products.isEmpty()) {
                     Text(stringResource(R.string.empty_product), color = Color.Gray)
                 } else {
@@ -150,8 +150,7 @@ fun ProfileUMKMScreen(
                 Button(
                     onClick = {
                         navController.navigate("edit_umkm/${data.id}")
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                    }, modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(R.string.edit))
                 }

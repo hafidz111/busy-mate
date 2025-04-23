@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,9 +50,17 @@ fun HomeScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchCategories()
+        viewModel.fetchUMKM()
+    }
+
     val filteredUMKM = umkmList.filter { umkm ->
         val categoryMatch = selectedCategory?.textCategory?.let {
-            it.equals(stringResource(R.string.tag_all), true) || umkm.category.contains(it, ignoreCase = true)
+            it.equals(stringResource(R.string.tag_all), true) || umkm.category.contains(
+                it,
+                ignoreCase = true
+            )
         } ?: true
 
         val queryMatch = query.isBlank() || umkm.nameUMKM.contains(query, ignoreCase = true)
@@ -125,7 +134,10 @@ fun HomeScreen(
         } else if (filteredUMKM.isEmpty()) {
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(R.string.empty_umkm), style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = stringResource(R.string.empty_umkm),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         } else {

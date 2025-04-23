@@ -23,7 +23,6 @@ class LoginViewModel(
     var loginSuccess by mutableStateOf(false)
     private var loginError by mutableStateOf<String?>(null)
 
-
     fun validateInput(context: Context) {
         emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             context.getString(R.string.email_not_valid)

@@ -39,8 +39,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CreateUMKMScreen(
-    modifier: Modifier,
-    onCreateSuccess: () -> Unit
+    modifier: Modifier, onCreateSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance().reference
@@ -118,23 +117,18 @@ fun CreateUMKMScreen(
                     )
 
                     withContext(Dispatchers.Main) {
-                        database.child("umkm").child(uid).setValue(newUMKM)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    context,
-                                    "UMKM berhasil didaftarkan",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                onCreateSuccess()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(context, "Gagal mendaftar UMKM", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
+                        database.child("umkm").child(uid).setValue(newUMKM).addOnSuccessListener {
+                            Toast.makeText(
+                                context, "UMKM berhasil didaftarkan", Toast.LENGTH_SHORT
+                            ).show()
+                            onCreateSuccess()
+                        }.addOnFailureListener {
+                            Toast.makeText(context, "Gagal mendaftar UMKM", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {

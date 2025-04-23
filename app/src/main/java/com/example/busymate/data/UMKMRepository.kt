@@ -79,4 +79,31 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         })
         awaitClose {}
     }
+
+    fun getUMKMById(umkmId: String): Flow<Result<UMKM>> = callbackFlow {
+        database.child("umkm")
+            .orderByChild("id")
+            .equalTo(umkmId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val umkm = snapshot.children.firstOrNull()?.getValue(UMKM::class.java)
+                        if (umkm != null) {
+                            trySendBlocking(Result.success(umkm))
+                        } else {
+                            trySendBlocking(Result.failure(Exception("UMKM not found")))
+                        }
+                    } else {
+                        trySendBlocking(Result.failure(Exception("UMKM not found")))
+                    }
+                    close()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    trySendBlocking(Result.failure(error.toException()))
+                    close()
+                }
+            })
+        awaitClose {}
+    }
 }

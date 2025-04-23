@@ -143,6 +143,9 @@ fun LoginScreen(
 @Composable
 private fun LoginScreenPreview() {
     BusyMateTheme {
-        LoginScreen(modifier = Modifier.background(Color.Blue), onLoginSuccess = {}, onRegisterClick = {})
+        LoginScreen(
+            modifier = Modifier.background(Color.Blue),
+            onLoginSuccess = {},
+            onRegisterClick = {})
     }
 }

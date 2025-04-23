@@ -33,12 +33,10 @@ import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun RegisterScreen(
-    modifier: Modifier = Modifier,
-    onRegisterSuccess: () -> Unit
+    modifier: Modifier = Modifier, onRegisterSuccess: () -> Unit
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
 
         var email by remember { mutableStateOf("") }
@@ -80,10 +78,7 @@ fun RegisterScreen(
             val validation = validateInput(email, password, name)
             errorState = validation
 
-            if (validation.email == null &&
-                validation.password == null &&
-                validation.name == null
-            ) {
+            if (validation.email == null && validation.password == null && validation.name == null) {
 
                 firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
@@ -92,36 +87,30 @@ fun RegisterScreen(
                             val uid = user?.uid.orEmpty()
 
                             val userData = mapOf(
-                                "email" to email,
-                                "name" to name
+                                "email" to email, "name" to name
                             )
                             firebaseDatabase.child("users").child(uid).setValue(userData)
 
-                            val profileUpdates = UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .build()
+                            val profileUpdates =
+                                UserProfileChangeRequest.Builder().setDisplayName(name).build()
 
-                            user?.updateProfile(profileUpdates)
-                                ?.addOnCompleteListener {
-                                    if (it.isSuccessful) {
-                                        FirebaseAuth.getInstance().currentUser?.reload()
-                                            ?.addOnCompleteListener {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Register Berhasil",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                onRegisterSuccess()
-                                            }
-                                    }
+                            user?.updateProfile(profileUpdates)?.addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    FirebaseAuth.getInstance().currentUser?.reload()
+                                        ?.addOnCompleteListener {
+                                            Toast.makeText(
+                                                context, "Register Berhasil", Toast.LENGTH_SHORT
+                                            ).show()
+                                            onRegisterSuccess()
+                                        }
                                 }
-                                ?.addOnFailureListener {
-                                    Toast.makeText(
-                                        context,
-                                        "Gagal Simpan name: ${it.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                            }?.addOnFailureListener {
+                                Toast.makeText(
+                                    context,
+                                    "Gagal Simpan name: ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         } else {
                             Toast.makeText(
                                 context,
@@ -144,8 +133,7 @@ fun RegisterScreen(
         )
 
         Text(
-            modifier = modifier
-                .padding(4.dp),
+            modifier = modifier.padding(4.dp),
             text = "Register",
             style = MaterialTheme.typography.titleMedium,
             fontSize = 35.sp,
@@ -153,33 +141,21 @@ fun RegisterScreen(
         )
 
         Text(
-            modifier = modifier
-                .padding(4.dp),
-            text = "Please Register to Login",
-            fontSize = 25.sp
+            modifier = modifier.padding(4.dp), text = "Please Register to Login", fontSize = 25.sp
         )
 
-        RegisterField(
-            email = email,
-            password = password,
-            name = name,
-            onEmailChange = {
-                email = it
-                errorState = validateInput(it, password, name)
-            },
-            onPasswordChange = {
-                password = it
-                errorState = validateInput(email, it, name)
-            },
-            onNickChange = {
-                name = it
-                errorState = validateInput(email, password, it)
-            },
-            errorValidation = errorState,
-            onRegisterClick = {
-                handleRegister()
-            }
-        )
+        RegisterField(email = email, password = password, name = name, onEmailChange = {
+            email = it
+            errorState = validateInput(it, password, name)
+        }, onPasswordChange = {
+            password = it
+            errorState = validateInput(email, it, name)
+        }, onNickChange = {
+            name = it
+            errorState = validateInput(email, password, it)
+        }, errorValidation = errorState, onRegisterClick = {
+            handleRegister()
+        })
     }
 }
 

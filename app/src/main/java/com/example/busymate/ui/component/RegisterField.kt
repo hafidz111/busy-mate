@@ -34,7 +34,7 @@ import com.example.busymate.ui.screen.register.RegisterInputError
 fun RegisterField(
     email: String,
     password: String,
-    nickname: String,
+    name: String,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onNickChange: (String) -> Unit,
@@ -45,6 +45,22 @@ fun RegisterField(
     var passwordVisible by remember { mutableStateOf(false) }
 
     Column {
+        OutlinedTextField(
+            value = name,
+            onValueChange = onNickChange,
+            label = { Text("name") },
+            isError = errorValidation.name != null,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text
+            ),
+            modifier = modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            singleLine = true
+        )
+
+        errorValidation.name?.let { ErrorMessage(it) }
+
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
@@ -88,22 +104,6 @@ fun RegisterField(
         )
 
         errorValidation.password?.let { ErrorMessage(it) }
-
-        OutlinedTextField(
-            value = nickname,
-            onValueChange = onNickChange,
-            label = { Text("Nickname") },
-            isError = errorValidation.nickname != null,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text
-            ),
-            modifier = modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            singleLine = true
-        )
-
-        errorValidation.nickname?.let { ErrorMessage(it) }
 
         Spacer(modifier = Modifier.height(16.dp))
 

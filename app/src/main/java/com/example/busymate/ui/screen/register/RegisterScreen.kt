@@ -1,6 +1,7 @@
 package com.example.busymate.ui.screen.register
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,9 +28,13 @@ import com.example.busymate.R
 import com.example.busymate.ui.component.RegisterField
 import com.example.busymate.ui.theme.BusyMateTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {
+fun RegisterScreen(
+    modifier: Modifier = Modifier,
+    onRegisterSuccess: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -37,13 +42,14 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
 
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        var nickname by remember { mutableStateOf("") }
+        var name by remember { mutableStateOf("") }
         var errorState by remember { mutableStateOf(RegisterInputError()) }
         val context = LocalContext.current
 
         val firebaseAuth = FirebaseAuth.getInstance()
+        val firebaseDatabase = FirebaseDatabase.getInstance().reference
 
-        fun validateInput(email: String, password: String, nickname: String): RegisterInputError {
+        fun validateInput(email: String, password: String, name: String): RegisterInputError {
             val emailError = if (email.isBlank()) {
                 context.getString(R.string.field_is_blank)
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -60,24 +66,45 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
                 null
             }
 
-            val nicknameError = if (nickname.isBlank()) {
+            val nameError = if (name.isBlank()) {
                 context.getString(R.string.field_is_blank)
             } else {
                 null
             }
 
-            return RegisterInputError(emailError, passwordError, nicknameError)
+            return RegisterInputError(emailError, passwordError, nameError)
         }
 
         fun handleRegister() {
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+            val validation = validateInput(email, password, name)
+            errorState = validation
 
-                    } else {
+            if (validation.email == null &&
+                validation.password == null &&
+                validation.name == null) {
 
+                firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val uid = task.result?.user?.uid.orEmpty()
+                            val userData = mapOf(
+                                "email" to email,
+                                "name" to name
+                            )
+
+                            firebaseDatabase.child("users").child(uid).setValue(userData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Register Berhasil", Toast.LENGTH_SHORT).show()
+                                    onRegisterSuccess()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Gagal Simpan name: ${it.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            Toast.makeText(context, "Register Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+            }
         }
 
         Image(
@@ -109,17 +136,17 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
         RegisterField(
             email = email,
             password = password,
-            nickname = nickname,
+            name = name,
             onEmailChange = {
                 email = it
-                errorState = validateInput(it, password, nickname)
+                errorState = validateInput(it, password, name)
             },
             onPasswordChange = {
                 password = it
-                errorState = validateInput(email, it, nickname)
+                errorState = validateInput(email, it, name)
             },
             onNickChange = {
-                nickname = it
+                name = it
                 errorState = validateInput(email, password, it)
             },
             errorValidation = errorState,
@@ -134,6 +161,6 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun RegisterPreview() {
     BusyMateTheme {
-        RegisterScreen()
+        RegisterScreen(onRegisterSuccess = {})
     }
 }

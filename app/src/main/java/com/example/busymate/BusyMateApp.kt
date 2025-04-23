@@ -27,6 +27,7 @@ import com.example.busymate.ui.screen.login.LoginScreen
 import com.example.busymate.ui.screen.profile.ProfileUMKMScreen
 import com.example.busymate.ui.screen.profile.CreateUMKMScreen
 import com.example.busymate.ui.screen.profile.EditUMKMScreen
+import com.example.busymate.ui.screen.register.RegisterScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 
 @Composable
@@ -119,10 +120,22 @@ fun BusyMateApp(
             composable(Screen.Login.route) {
                 LoginScreen(
                     onLoginSuccess = {
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate("home") {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
+                    },
+                    onRegisterClick = {
+                        navController.navigate("register")
                     }
+                )
+            }
+            composable(Screen.Register.route) {
+                RegisterScreen(
+                    onRegisterSuccess = {
+                        navController.navigate("login") {
+                            popUpTo(Screen.Register.route) { inclusive = true }
+                        }
+                }
                 )
             }
             composable(Screen.Home.route) {

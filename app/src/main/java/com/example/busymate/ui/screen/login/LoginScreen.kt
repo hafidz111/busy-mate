@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit,
     viewModel: LoginViewModel = viewModel(
         factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
     )
@@ -117,7 +118,8 @@ fun LoginScreen(
                         },
                         onLoginClick = {
                             login(context)
-                        }
+                        },
+                        onRegisterClick = onRegisterClick
                     )
                 }
             }
@@ -141,6 +143,6 @@ fun LoginScreen(
 @Composable
 private fun LoginScreenPreview() {
     BusyMateTheme {
-        LoginScreen(modifier = Modifier.background(Color.Blue), onLoginSuccess = {})
+        LoginScreen(modifier = Modifier.background(Color.Blue), onLoginSuccess = {}, onRegisterClick = {})
     }
 }

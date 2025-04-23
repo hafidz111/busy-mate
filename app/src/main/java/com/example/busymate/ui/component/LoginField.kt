@@ -119,7 +119,7 @@ fun MoveToRegister(label: String, value: String, onRegisterClick: () -> Unit) {
         Text(
             text = label,
             fontSize = 14.sp,
-            modifier = Modifier.padding(start = 10.dp, end = 5.dp)
+            modifier = Modifier.padding(start = 12.dp, end = 5.dp)
         )
         Text(
             text = value,
@@ -137,6 +137,6 @@ private fun ErrorMessage(message: String) {
         text = message,
         color = Color.Red,
         fontSize = 12.sp,
-        modifier = Modifier.padding(start = 8.dp, top = 2.dp)
+        modifier = Modifier.padding(start = 12.dp, top = 2.dp)
     )
 }

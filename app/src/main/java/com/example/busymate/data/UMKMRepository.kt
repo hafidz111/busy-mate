@@ -127,4 +127,19 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         })
         awaitClose {}
     }
+
+    fun createUMKM(umkm: UMKM): Flow<Result<Unit>> = callbackFlow {
+        database.child("umkm")
+            .child(umkm.id)
+            .setValue(umkm)
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener { exc ->
+                trySendBlocking(Result.failure(exc))
+                close()
+            }
+        awaitClose { }
+    }
 }

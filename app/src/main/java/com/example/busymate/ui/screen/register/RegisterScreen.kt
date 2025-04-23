@@ -133,15 +133,15 @@ fun RegisterScreen(
         )
 
         Text(
-            modifier = modifier.padding(4.dp),
+            modifier = modifier.padding(12.dp),
             text = "Register",
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 35.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            modifier = modifier.padding(4.dp), text = "Please Register to Login", fontSize = 25.sp
+            modifier = modifier.padding(12.dp), text = "Please Register to Login", fontSize = 24.sp
         )
 
         RegisterField(email = email, password = password, name = name, onEmailChange = {

@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.profile
+package com.example.busymate.ui.screen.edit
 
 import android.net.Uri
 import android.util.Log

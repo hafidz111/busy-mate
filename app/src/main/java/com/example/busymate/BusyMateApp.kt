@@ -25,8 +25,8 @@ import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
 import com.example.busymate.ui.screen.login.LoginScreen
 import com.example.busymate.ui.screen.profile.ProfileUMKMScreen
-import com.example.busymate.ui.screen.profile.CreateUMKMScreen
-import com.example.busymate.ui.screen.profile.EditUMKMScreen
+import com.example.busymate.ui.screen.create.CreateUMKMScreen
+import com.example.busymate.ui.screen.edit.EditUMKMScreen
 import com.example.busymate.ui.screen.register.RegisterScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 

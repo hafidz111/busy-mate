@@ -99,7 +99,7 @@ fun LoginScreen(
                             .padding(top = 20.dp, start = 12.dp),
                         text = stringResource(R.string.lets_get_started),
                         style = MaterialTheme.typography.titleMedium,
-                        fontSize = 25.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
 

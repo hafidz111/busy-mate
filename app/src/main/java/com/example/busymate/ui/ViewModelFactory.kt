@@ -6,6 +6,7 @@ import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.screen.detail.DetailViewModel
 import com.example.busymate.ui.screen.home.HomeViewModel
 import com.example.busymate.ui.screen.login.LoginViewModel
+import com.example.busymate.ui.screen.profile.ProfileUMKMViewModel
 import com.example.busymate.ui.screen.setting.SettingViewModel
 
 class ViewModelFactory(private val repository: UMKMRepository) :
@@ -21,6 +22,8 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return DetailViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
             return SettingViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(ProfileUMKMViewModel::class.java)) {
+            return ProfileUMKMViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import com.example.busymate.R
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.Search
-import com.example.busymate.ui.component.UMKMCardVertical
+import com.example.busymate.ui.component.UMKMCard
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -60,7 +60,7 @@ fun HomeScreen(
         database.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<Category>()
-                list.add(Category(id = 0, textCategory = context.getString(R.string.tag_all)))
+                list.add(Category(categoryId = 0, textCategory = context.getString(R.string.tag_all)))
 
                 for (catSnap in snapshot.children) {
                     val category = catSnap.getValue(Category::class.java)
@@ -172,7 +172,7 @@ fun HomeScreen(
             }
         } else {
             items(filteredUMKM) { umkm ->
-                UMKMCardVertical(
+                UMKMCard(
                     umkm = umkm,
                     onClick = { navController.navigate("detail/${umkm.id}/${umkm.nameUMKM}") },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)

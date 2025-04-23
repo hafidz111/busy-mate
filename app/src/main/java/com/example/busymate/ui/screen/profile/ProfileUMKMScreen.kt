@@ -135,9 +135,13 @@ fun ProfileUMKMScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(stringResource(R.string.product), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                LazyRow {
-                    items(data.products) { product ->
-                        ProductCard(product = product)
+                if (data.products.isEmpty()) {
+                    Text(stringResource(R.string.empty_product), color = Color.Gray)
+                } else {
+                    LazyRow {
+                        items(data.products) { product ->
+                            ProductCard(product = product)
+                        }
                     }
                 }
 

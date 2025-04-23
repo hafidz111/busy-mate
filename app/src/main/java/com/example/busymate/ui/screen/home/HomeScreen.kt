@@ -59,6 +59,7 @@ fun HomeScreen(
 
         database.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("Firebase", "Categories snapshot: $snapshot")
                 val list = mutableListOf<Category>()
                 list.add(Category(categoryId = 0, textCategory = context.getString(R.string.tag_all)))
 

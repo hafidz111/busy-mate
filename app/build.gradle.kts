@@ -80,4 +80,6 @@ dependencies {
     implementation(libs.postgrest.kt)
     implementation(libs.storage.kt)
     implementation(libs.ktor.client.okhttp)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
 }

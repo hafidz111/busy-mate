@@ -32,6 +32,7 @@ import com.example.busymate.ui.screen.setting.SettingScreen
 @Composable
 fun BusyMateApp(
     modifier: Modifier = Modifier,
+    isLoggedIn: Boolean,
     onLogout: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
@@ -112,7 +113,7 @@ fun BusyMateApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = if (isLoggedIn) Screen.Home.route else Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Login.route) {
@@ -138,7 +139,7 @@ fun BusyMateApp(
                 SettingScreen(
                     onLogout = {
                         onLogout()
-                        navController.navigate(Screen.Login.route) {
+                        navController.navigate("login") {
                             popUpTo(0) { inclusive = true }
                         }
                     },

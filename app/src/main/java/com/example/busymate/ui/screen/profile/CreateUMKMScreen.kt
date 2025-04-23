@@ -62,7 +62,7 @@ fun CreateUMKMScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(12.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(stringResource(R.string.form_umkm), fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -82,7 +82,7 @@ fun CreateUMKMScreen(
             onDescriptionChange = { description = it },
             selectedImageUri = selectedImageUri,
             onImageClick = { imagePickerLauncher.launch("image/*") },
-            imageUrl = imageUMKM.toString()
+            imageUrl = imageUMKM ?: ""
         )
 
         Button(
@@ -134,7 +134,9 @@ fun CreateUMKMScreen(
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
             Text(stringResource(R.string.submit))
         }

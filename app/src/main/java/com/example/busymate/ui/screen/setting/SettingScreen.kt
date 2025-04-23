@@ -1,6 +1,5 @@
 package com.example.busymate.ui.screen.setting
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.busymate.R
+import com.example.busymate.data.UMKMRepository
+import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.ProfileCard
 import com.example.busymate.ui.component.SettingListItem
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SettingScreen(
     onLogout: () -> Unit,
-    onProfileUMKM: () -> Unit
+    onProfileUMKM: () -> Unit,
+    viewModel: SettingViewModel = viewModel(
+        factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
+    )
 ) {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize()) {
@@ -38,14 +43,7 @@ fun SettingScreen(
         SettingListItem(
             icon = Icons.AutoMirrored.Filled.ExitToApp,
             title = stringResource(R.string.logout),
-            onClick = {
-                val sharedPreferences =
-                    context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                sharedPreferences.edit {
-                    remove("is_logged_in")
-                }
-                onLogout()
-            }
+            onClick = { viewModel.logout(context, onLogout) }
         )
     }
 }

@@ -86,6 +86,16 @@ fun FormUMKM(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
+            value = contact,
+            onValueChange = onContactChange,
+            label = { Text(stringResource(R.string.no_whatsapp)) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
             value = location,
             onValueChange = onLocationChange,
             label = { Text(stringResource(R.string.location)) },
@@ -111,16 +121,6 @@ fun FormUMKM(
             label = { Text(stringResource(R.string.description)) },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 3
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = contact,
-            onValueChange = onContactChange,
-            label = { Text(stringResource(R.string.no_whatsapp)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(16.dp))

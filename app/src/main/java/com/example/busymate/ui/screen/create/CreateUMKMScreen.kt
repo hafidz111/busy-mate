@@ -38,7 +38,6 @@ import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.FormUMKM
 import com.example.busymate.utils.uploadImage
 import com.google.firebase.auth.FirebaseAuth
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

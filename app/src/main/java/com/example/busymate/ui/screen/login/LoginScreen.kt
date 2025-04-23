@@ -147,7 +147,8 @@ fun LoginScreen(
                     },
                     onLoginClick = {
                         handleLogin()
-                    }
+                    },
+                    onRegisterClick = {}
                 )
             }
         }

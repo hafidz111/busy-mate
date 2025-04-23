@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.screen.create.CreateUMKMViewModel
 import com.example.busymate.ui.screen.detail.DetailViewModel
+import com.example.busymate.ui.screen.edit.EditUMKMViewModel
 import com.example.busymate.ui.screen.home.HomeViewModel
 import com.example.busymate.ui.screen.login.LoginViewModel
 import com.example.busymate.ui.screen.profile.ProfileUMKMViewModel
@@ -27,6 +28,8 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return ProfileUMKMViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(CreateUMKMViewModel::class.java)) {
             return CreateUMKMViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(EditUMKMViewModel::class.java)) {
+            return EditUMKMViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

@@ -117,7 +117,11 @@ fun ProfileUMKMScreen(
                 Text(data.contact)
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(stringResource(R.string.product), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.product),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
                 if (data.products.isEmpty()) {
                     Text(stringResource(R.string.empty_product), color = Color.Gray)

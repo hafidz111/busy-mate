@@ -1,7 +1,6 @@
 package com.example.busymate.ui.screen.edit
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,28 +13,34 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import com.example.busymate.model.UMKM
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.busymate.R
+import com.example.busymate.data.UMKMRepository
+import com.example.busymate.model.UMKM
+import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.FormUMKM
 import com.example.busymate.utils.uploadImage
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,7 +48,11 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditUMKMScreen(
-    umkmId: String, navController: NavController
+    umkmId: String,
+    navController: NavController,
+    viewModel: EditUMKMViewModel = viewModel(
+        factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
+    )
 ) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance().reference
@@ -56,6 +65,8 @@ fun EditUMKMScreen(
     var category by remember { mutableStateOf("") }
     var imageUMKM by remember { mutableStateOf("") }
     var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    val isSaving by viewModel.isLoading.collectAsState()
+
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             selectedImageUri = uri
@@ -83,6 +94,17 @@ fun EditUMKMScreen(
                     isLoading = false
                 }
             })
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.updateResult.collect { result ->
+            result.onSuccess {
+                Toast.makeText(context, "UMKM berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }.onFailure {
+                Toast.makeText(context, "Gagal memperbarui UMKM", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     if (isLoading) {
@@ -113,60 +135,39 @@ fun EditUMKMScreen(
                 selectedImageUri = selectedImageUri,
                 onImageClick = { imagePickerLauncher.launch("image/*") })
 
+            if (isSaving) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
             Button(
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val imageUrl = if (selectedImageUri != null) {
-                                uploadImage(selectedImageUri!!, context, imageUMKM)
-                            } else {
-                                imageUMKM
-                            }
-
-                            if (imageUrl == null) {
-                                Log.e("CreateUMKM", "uploadImage returned null")
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        context, "Gagal upload gambar", Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                return@launch
-                            }
-                            Log.d("CreateUMKM", "Received imageUrl: $imageUrl")
-
-                            val updatedUMKM = UMKM(
-                                id = umkmId,
-                                nameUMKM = nameUMKM,
-                                location = location,
-                                description = description,
-                                contact = contact,
-                                category = category,
-                                imageUMKM = imageUrl,
-                                products = umkmData?.products ?: emptyList()
-                            )
-
-                            withContext(Dispatchers.Main) {
-                                database.child("umkm").child(umkmId).setValue(updatedUMKM)
-                                    .addOnSuccessListener {
-                                        Toast.makeText(
-                                            context, "UMKM berhasil diperbarui", Toast.LENGTH_SHORT
-                                        ).show()
-                                        navController.popBackStack()
-                                    }.addOnFailureListener {
-                                        Toast.makeText(
-                                            context, "Gagal memperbarui UMKM", Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                            }
-
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    context, "Terjadi kesalahan: ${e.message}", Toast.LENGTH_LONG
-                                ).show()
-                                Log.e("EditUMKMScreen", "Error updating UMKM", e)
-                            }
+                        val imageUrl = if (selectedImageUri != null) {
+                            uploadImage(selectedImageUri!!, context, imageUMKM)
+                        } else {
+                            imageUMKM
                         }
+
+                        if (imageUrl == null) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Gagal upload gambar", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            return@launch
+                        }
+
+                        val updatedUMKM = UMKM(
+                            id = umkmId,
+                            nameUMKM = nameUMKM,
+                            location = location,
+                            description = description,
+                            contact = contact,
+                            category = category,
+                            imageUMKM = imageUrl,
+                            products = umkmData?.products ?: emptyList()
+                        )
+
+                        viewModel.updateUMKM(updatedUMKM)
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()

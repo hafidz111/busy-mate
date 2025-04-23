@@ -119,7 +119,8 @@ fun CreateUMKMScreen(
 
                     if (imageUrl == null) {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "Gagal upload gambar", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Gagal upload gambar", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         return@launch
                     }
@@ -147,7 +148,7 @@ fun CreateUMKMScreen(
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("Submit")
+                Text(stringResource(R.string.submit))
             }
         }
     }

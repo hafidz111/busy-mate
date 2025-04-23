@@ -1,7 +1,5 @@
 package com.example.busymate.ui.screen.home
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,18 +12,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.example.busymate.model.Category
-import com.example.busymate.model.UMKM
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,77 +28,41 @@ import com.example.busymate.R
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.Search
 import com.example.busymate.ui.component.UMKMCard
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.busymate.data.UMKMRepository
+import com.example.busymate.ui.ViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
+    )
 ) {
-    var query by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<Category?>(null) }
-    var umkmList by remember { mutableStateOf<List<UMKM>>(emptyList()) }
-    var categories by remember { mutableStateOf<List<Category>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-
-    val context = LocalContext.current
-
-    LaunchedEffect(true) {
-        val database = FirebaseDatabase.getInstance().reference
-
-        database.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("Firebase", "Categories snapshot: $snapshot")
-                val list = mutableListOf<Category>()
-                list.add(Category(categoryId = 0, textCategory = context.getString(R.string.tag_all)))
-
-                for (catSnap in snapshot.children) {
-                    val category = catSnap.getValue(Category::class.java)
-                    category?.let { list.add(it) }
-                }
-
-                categories = list
-                selectedCategory = list.firstOrNull()
-                Log.d("Firebase", "Categories loaded: ${categories.size}")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Gagal memuat kategori", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        database.child("umkm").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<UMKM>()
-                for (umkmSnap in snapshot.children) {
-                    val umkm = umkmSnap.getValue(UMKM::class.java)
-                    umkm?.let { list.add(it) }
-                }
-                umkmList = list
-                isLoading = false
-                Log.d("Firebase", "UMKM loaded: ${umkmList.size}")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Gagal memuat data UMKM", Toast.LENGTH_SHORT).show()
-                isLoading = false
-            }
-        })
-    }
+    val query by viewModel.query.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val umkmList by viewModel.umkmList.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     val filteredUMKM = umkmList.filter { umkm ->
         val categoryMatch = selectedCategory?.textCategory?.let {
-            if (it.equals(stringResource(R.string.tag_all), true)) true
-            else umkm.category.contains(it, ignoreCase = true)
+            it.equals(stringResource(R.string.tag_all), true) || umkm.category.contains(it, ignoreCase = true)
         } ?: true
 
         val queryMatch = query.isBlank() || umkm.nameUMKM.contains(query, ignoreCase = true)
 
         categoryMatch && queryMatch
+    }
+
+    if (!errorMessage.isNullOrEmpty()) {
+        Snackbar {
+            Text(text = errorMessage ?: "")
+        }
     }
 
     LazyColumn(
@@ -124,7 +81,7 @@ fun HomeScreen(
                 )
                 Search(
                     query = query,
-                    onQueryChange = { query = it },
+                    onQueryChange = { viewModel.onQueryChanged(it) },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(16.dp)
@@ -143,7 +100,7 @@ fun HomeScreen(
                         category = category,
                         isSelected = isSelected,
                         onClick = {
-                            selectedCategory = category
+                            viewModel.onCategorySelected(category)
                         }
                     )
                 }

@@ -28,6 +28,7 @@ import com.example.busymate.R
 import com.example.busymate.ui.component.RegisterField
 import com.example.busymate.ui.theme.BusyMateTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
@@ -81,27 +82,52 @@ fun RegisterScreen(
 
             if (validation.email == null &&
                 validation.password == null &&
-                validation.name == null) {
+                validation.name == null
+            ) {
 
                 firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            val uid = task.result?.user?.uid.orEmpty()
+                            val user = task.result?.user
+                            val uid = user?.uid.orEmpty()
+
                             val userData = mapOf(
                                 "email" to email,
                                 "name" to name
                             )
-
                             firebaseDatabase.child("users").child(uid).setValue(userData)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Register Berhasil", Toast.LENGTH_SHORT).show()
-                                    onRegisterSuccess()
+
+                            val profileUpdates = UserProfileChangeRequest.Builder()
+                                .setDisplayName(name)
+                                .build()
+
+                            user?.updateProfile(profileUpdates)
+                                ?.addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        FirebaseAuth.getInstance().currentUser?.reload()
+                                            ?.addOnCompleteListener {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Register Berhasil",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                onRegisterSuccess()
+                                            }
+                                    }
                                 }
-                                .addOnFailureListener {
-                                    Toast.makeText(context, "Gagal Simpan name: ${it.message}", Toast.LENGTH_SHORT).show()
+                                ?.addOnFailureListener {
+                                    Toast.makeText(
+                                        context,
+                                        "Gagal Simpan name: ${it.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                         } else {
-                            Toast.makeText(context, "Register Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Register Gagal: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
             }

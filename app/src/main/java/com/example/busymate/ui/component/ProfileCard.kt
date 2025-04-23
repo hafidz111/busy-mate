@@ -17,9 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,30 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun ProfileCard() {
     val user = FirebaseAuth.getInstance().currentUser
+    val name = user?.displayName ?: "Guest User"
     val email = user?.email ?: "No Email"
     val photoUrl = user?.photoUrl
-
-    val nameState = remember { mutableStateOf("Loading...") }
-
-    LaunchedEffect(user?.uid) {
-        val uid = user?.uid ?: return@LaunchedEffect
-        val dbRef = FirebaseDatabase.getInstance()
-            .getReference("users")
-            .child(uid)
-            .child("name")
-
-        dbRef.get().addOnSuccessListener { snapshot ->
-            val name = snapshot.getValue(String::class.java)
-            nameState.value = name ?: "Guest User"
-        }.addOnFailureListener {
-            nameState.value = "Guest User"
-        }
-    }
 
     Card(
         modifier = Modifier
@@ -87,7 +67,7 @@ fun ProfileCard() {
 
             Column {
                 Text(
-                    text = nameState.value,
+                    text = name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

@@ -3,6 +3,7 @@ package com.example.busymate.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.busymate.data.UMKMRepository
+import com.example.busymate.ui.screen.home.HomeViewModel
 import com.example.busymate.ui.screen.login.LoginViewModel
 import com.example.busymate.ui.screen.setting.SettingViewModel
 
@@ -13,7 +14,10 @@ class ViewModelFactory(private val repository: UMKMRepository) :
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(repository) as T
-        } else if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
+        } else if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(repository) as T
+        }
+        else if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
             return SettingViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)

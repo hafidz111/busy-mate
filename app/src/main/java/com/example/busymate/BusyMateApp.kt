@@ -189,7 +189,7 @@ fun BusyMateApp(
             ) { backStack ->
                 val id = backStack.arguments?.getString("umkmId") ?: return@composable
                 EditUMKMScreen(
-                    umkmId = id,
+                    uid = id,
                     navController = navController
                 )
             }

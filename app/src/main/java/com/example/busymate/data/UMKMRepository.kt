@@ -41,13 +41,18 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
     }
 
     fun getCategories(): Flow<Result<List<Category>>> = callbackFlow {
-        database.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
+        database.child("umkm").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<Category>()
-                for (catSnap in snapshot.children) {
-                    val category = catSnap.getValue(Category::class.java)
-                    category?.let { list.add(it) }
+                var idCounter = 0
+
+                for (umkmSnap in snapshot.children) {
+                    val rawCategory = umkmSnap.child("category").getValue(String::class.java)
+                    rawCategory?.split(",")?.map { it.trim() }?.forEach { categoryText ->
+                        list.add(Category(categoryId = idCounter++, textCategory = categoryText))
+                    }
                 }
+
                 trySendBlocking(Result.success(list))
                 close()
             }
@@ -66,7 +71,9 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                 val list = mutableListOf<UMKM>()
                 for (umkmSnap in snapshot.children) {
                     val umkm = umkmSnap.getValue(UMKM::class.java)
-                    umkm?.let { list.add(it) }
+                    umkm?.let {
+                        list.add(it)
+                    }
                 }
                 trySendBlocking(Result.success(list))
                 close()

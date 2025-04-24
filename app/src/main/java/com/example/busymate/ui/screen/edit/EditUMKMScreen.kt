@@ -48,7 +48,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditUMKMScreen(
-    umkmId: String,
+    uid: String,
     navController: NavController,
     viewModel: EditUMKMViewModel = viewModel(
         factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
@@ -72,8 +72,8 @@ fun EditUMKMScreen(
             selectedImageUri = uri
         }
 
-    LaunchedEffect(umkmId) {
-        database.child("umkm").child(umkmId)
+    LaunchedEffect(uid) {
+        database.child("umkm").child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val data = snapshot.getValue(UMKM::class.java)
@@ -157,13 +157,14 @@ fun EditUMKMScreen(
                         }
 
                         val updatedUMKM = UMKM(
-                            id = umkmId,
+                            id = uid,
                             nameUMKM = nameUMKM,
                             location = location,
                             description = description,
                             contact = contact,
                             category = category,
                             imageUMKM = imageUrl,
+                            tags = category.split(",").map(String::trim),
                             products = umkmData?.products ?: emptyList()
                         )
 

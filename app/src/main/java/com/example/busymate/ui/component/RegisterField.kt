@@ -49,7 +49,7 @@ fun RegisterField(
             value = name,
             onValueChange = onNickChange,
             label = { Text("name") },
-            isError = errorValidation.name != null,
+            isError = errorValidation.nameError != null,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text
             ),
@@ -59,13 +59,13 @@ fun RegisterField(
             singleLine = true
         )
 
-        errorValidation.name?.let { ErrorMessage(it) }
+        errorValidation.nameError?.let { ErrorMessage(it) }
 
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
             label = { Text("Email") },
-            isError = errorValidation.email != null,
+            isError = errorValidation.emailError != null,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email
             ),
@@ -75,15 +75,15 @@ fun RegisterField(
             singleLine = true
         )
 
-        if (errorValidation.email != null) {
-            ErrorMessage(errorValidation.email)
+        if (errorValidation.emailError != null) {
+            ErrorMessage(errorValidation.emailError)
         }
 
         OutlinedTextField(
             value = password,
             onValueChange = onPasswordChange,
             label = { Text("Password") },
-            isError = errorValidation.password != null,
+            isError = errorValidation.passwordError != null,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password
             ),
@@ -103,7 +103,7 @@ fun RegisterField(
             singleLine = true
         )
 
-        errorValidation.password?.let { ErrorMessage(it) }
+        errorValidation.passwordError?.let { ErrorMessage(it) }
 
         Spacer(modifier = Modifier.height(16.dp))
 

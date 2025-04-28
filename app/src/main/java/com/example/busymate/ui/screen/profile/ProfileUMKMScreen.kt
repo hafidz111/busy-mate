@@ -1,6 +1,8 @@
 package com.example.busymate.ui.screen.profile
 
 import android.annotation.SuppressLint
+import android.icu.text.DecimalFormat
+import android.icu.text.DecimalFormatSymbols
 import android.net.Uri
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +46,7 @@ import com.example.busymate.model.Category
 import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.ProductCard
+import java.util.Locale
 
 @SuppressLint("UseKtx")
 @Composable
@@ -112,6 +115,8 @@ fun ProfileUMKMScreen(
                 Text(stringResource(R.string.description), fontWeight = FontWeight.Bold)
                 Text(data.description)
 
+
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(stringResource(R.string.no_whatsapp), fontWeight = FontWeight.Bold)
                 Text(data.contact)
@@ -132,6 +137,12 @@ fun ProfileUMKMScreen(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(stringResource(R.string.price), fontWeight = FontWeight.Bold)
+                val symbols = DecimalFormatSymbols(Locale.GERMANY).apply{groupingSeparator = '.'; decimalSeparator = ','}
+                val currencyText = DecimalFormat("#,###", symbols).format(data.price)
+                Text(currencyText )
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

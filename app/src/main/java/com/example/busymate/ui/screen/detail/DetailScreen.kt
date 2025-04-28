@@ -2,6 +2,8 @@ package com.example.busymate.ui.screen.detail
 
 import android.content.Context
 import android.content.Intent
+import android.icu.text.DecimalFormat
+import android.icu.text.DecimalFormatSymbols
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +52,7 @@ import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.ProductCard
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Locale
 
 @Composable
 fun DetailScreen(
@@ -171,6 +174,16 @@ fun DetailScreen(
             } else {
                 Text(stringResource(R.string.empty_product), color = Color.Gray)
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                stringResource(R.string.price),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            val symbols = DecimalFormatSymbols(Locale.GERMANY).apply{groupingSeparator = '.'; decimalSeparator = ','}
+            val currencyText = DecimalFormat("#,###", symbols).format(umkm!!.price)
+            Text(currencyText, style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(24.dp))
 

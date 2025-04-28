@@ -62,6 +62,7 @@ fun CreateUMKMScreen(
     var location by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf(0L) }
 
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -99,6 +100,8 @@ fun CreateUMKMScreen(
             onCategoryChange = { category = it },
             description = description,
             onDescriptionChange = { description = it },
+            price = price.toString(),
+            onPriceChange = { price = it.toLong() },
             selectedImageUri = selectedImageUri,
             onImageClick = { imagePickerLauncher.launch("image/*") },
             imageUrl = ""
@@ -133,6 +136,7 @@ fun CreateUMKMScreen(
                         location = location,
                         category = category,
                         description = description,
+                        price = price,
                         tags = category.split(",").map(String::trim),
                         products = emptyList()
                     )

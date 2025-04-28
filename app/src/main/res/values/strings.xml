@@ -44,4 +44,5 @@
     <string name="create_board">Buat Boards</string>
     <string name="choose_picture_board">Pilih Gambar Postingan</string>
     <string name="picture_boards">Gambar Boards</string>
+    <string name="price">Total Harga</string>
 </resources>

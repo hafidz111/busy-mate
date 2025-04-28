@@ -9,5 +9,7 @@ data class UMKM(
     val category: String = "",
     val tags: List<String> = emptyList(),
     val description: String = "",
-    val products: List<ProductItem> = emptyList()
+    val products: List<ProductItem> = emptyList(),
+
+    val price: Long = 0,
 )

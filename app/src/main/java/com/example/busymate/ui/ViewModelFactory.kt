@@ -3,6 +3,8 @@ package com.example.busymate.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.busymate.data.UMKMRepository
+import com.example.busymate.ui.screen.board.BoardViewModel
+import com.example.busymate.ui.screen.create.CreateBoardViewModel
 import com.example.busymate.ui.screen.create.CreateUMKMViewModel
 import com.example.busymate.ui.screen.detail.DetailViewModel
 import com.example.busymate.ui.screen.edit.EditUMKMViewModel
@@ -33,6 +35,10 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return EditUMKMViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             return RegisterViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
+            return BoardViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(CreateBoardViewModel::class.java)) {
+            return CreateBoardViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

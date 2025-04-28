@@ -2,6 +2,7 @@ package com.example.busymate.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.example.busymate.model.Board
 import com.example.busymate.model.Category
 import com.example.busymate.model.UMKM
 import com.google.firebase.auth.FirebaseAuth
@@ -164,5 +165,41 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
             }
 
         awaitClose {}
+    }
+    // Board
+    fun getBoard(): Flow<Result<List<Board>>> = callbackFlow {
+        database.child("board").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Board>()
+                for (boardSnap in snapshot.children) {
+                    val board = boardSnap.getValue(Board::class.java)
+                    board?.let { list.add(it) }
+                }
+                trySendBlocking(Result.success(list))
+                close()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                trySendBlocking(Result.failure(error.toException()))
+                close()
+            }
+        })
+        awaitClose {}
+    }
+    fun createBoard(board: Board): Flow<Result<Unit>> = callbackFlow {
+        val key = database.child("board").push().key!!
+        board.id = key
+        database.child("board")
+            .child(key)
+            .setValue(board)
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener { exc ->
+                trySendBlocking(Result.failure(exc))
+                close()
+            }
+        awaitClose { }
     }
 }

@@ -38,4 +38,10 @@
     <string name="field_is_blank">Field tidak boleh kosong</string>
     <string name="register">Register</string>
     <string name="please_register_to_login">Please Register to Login</string>
+    <string name="form_board">Update Postingan Board</string>
+    <string name="list_board">Daftar Postingan</string>
+    <string name="empty_board">Belum ada Postingan</string>
+    <string name="create_board">Buat Boards</string>
+    <string name="choose_picture_board">Pilih Gambar Postingan</string>
+    <string name="picture_boards">Gambar Boards</string>
 </resources>

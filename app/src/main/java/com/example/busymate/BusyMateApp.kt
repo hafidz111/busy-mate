@@ -21,6 +21,7 @@ import com.example.busymate.ui.component.BottomNavigationBar
 import com.example.busymate.ui.component.TopBar
 import com.example.busymate.ui.navigation.Screen
 import com.example.busymate.ui.screen.board.BoardScreen
+import com.example.busymate.ui.screen.create.CreateBoardScreen
 import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
 import com.example.busymate.ui.screen.login.LoginScreen
@@ -102,6 +103,14 @@ fun BusyMateApp(
                             showBackButton = true
                         )
                     }
+
+                    Screen.CreateBoard.route -> {
+                        TopBar(
+                            title = stringResource(R.string.create_board),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
                 }
             }
         },
@@ -145,7 +154,7 @@ fun BusyMateApp(
             }
             composable(Screen.Board.route) {
                 BoardScreen(
-
+                    navController = navController
                 )
             }
             composable(Screen.Setting.route) {
@@ -191,6 +200,12 @@ fun BusyMateApp(
                 EditUMKMScreen(
                     uid = id,
                     navController = navController
+                )
+            }
+            composable(Screen.CreateBoard.route) {
+                CreateBoardScreen(
+                    onCreateSuccess = { navController.popBackStack() },
+                    modifier = Modifier
                 )
             }
         }

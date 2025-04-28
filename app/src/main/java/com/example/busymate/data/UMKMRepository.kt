@@ -5,8 +5,10 @@ import android.content.Context
 import com.example.busymate.model.Board
 import com.example.busymate.model.Category
 import com.example.busymate.model.UMKM
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +22,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
     private val database = FirebaseDatabase.getInstance().reference
 
     fun login(email: String, password: String): Flow<Result<FirebaseUser>> = callbackFlow {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     firebaseAuth.currentUser?.let {
@@ -32,6 +34,44 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                 close()
             }
         awaitClose {}
+    }
+
+    fun register(email: String, password: String, name: String): Flow<Result<AuthResult>> = callbackFlow {
+        val authListener = firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = task.result?.user
+                    val uid = user?.uid.orEmpty()
+
+                    val userData = mapOf(
+                        "email" to email, "name" to name
+                    )
+                    database.child("users").child(uid).setValue(userData)
+
+                    val profileUpdates =
+                        UserProfileChangeRequest.Builder().setDisplayName(name).build()
+
+                    user?.updateProfile(profileUpdates)?.addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            FirebaseAuth.getInstance().currentUser?.reload()
+                                ?.addOnCompleteListener {
+                                    trySendBlocking(Result.success(task.result))
+                                    close()
+                                }
+                        } else {
+                            trySendBlocking(Result.failure(task.exception ?: Exception("Gagal update profile")))
+                            close()
+                        }
+                    }?.addOnFailureListener {
+                        trySendBlocking(Result.failure(it))
+                        close()
+                    }
+                } else {
+                    trySendBlocking(Result.failure(task.exception ?: Exception("Register Gagal")))
+                    close()
+                }
+            }
+        awaitClose { authListener.isCanceled }
     }
 
     @SuppressLint("UseKtx")

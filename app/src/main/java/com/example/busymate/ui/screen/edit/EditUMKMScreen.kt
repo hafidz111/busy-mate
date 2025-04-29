@@ -156,12 +156,13 @@ fun EditUMKMScreen(
                             return@launch
                         }
 
+                        val validatedPrice = if (price.isBlank() ){ 0 } else { price.toLong() }
                         val updatedUMKM = UMKM(
                             id = uid,
                             nameUMKM = nameUMKM,
                             location = location,
                             description = description,
-                            price = price.toLong(),
+                            price = validatedPrice,
                             contact = contact,
                             category = category,
                             imageUMKM = imageUrl,

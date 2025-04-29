@@ -128,6 +128,7 @@ fun CreateUMKMScreen(
                         return@launch
                     }
 
+                    val validatedPrice = if (price.toString().isBlank() ){ 0 } else { price.toLong() }
                     val umkm = UMKM(
                         id = uid,
                         imageUMKM = imageUrl,
@@ -136,7 +137,7 @@ fun CreateUMKMScreen(
                         location = location,
                         category = category,
                         description = description,
-                        price = price,
+                        price = validatedPrice,
                         tags = category.split(",").map(String::trim),
                         products = emptyList()
                     )

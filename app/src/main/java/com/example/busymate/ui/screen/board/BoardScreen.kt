@@ -7,13 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
@@ -36,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun BoardScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
     viewModel: BoardViewModel = viewModel(
         factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
     )
@@ -49,72 +42,52 @@ fun BoardScreen(
         viewModel.fetchBoard()
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("create-board") },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.create_umkm)
-                )
-            }
-        }
-    ) { paddingValues ->
+    val sortedList = boardList.sortedByDescending { it.timestamp }
+
+    Box(modifier = modifier.fillMaxSize()) {
         if (!errorMessage.isNullOrEmpty()) {
-            Snackbar(modifier = Modifier.padding(paddingValues)) {
-                Text(text = errorMessage ?: "")
+            Snackbar(
+                modifier = Modifier.align(Alignment.TopCenter).padding(16.dp)
+            ) {
+                Text(text = errorMessage!!)
             }
         }
 
-        // Urutkan list berdasarkan timestamp terbaru di atas
-        val sortedList = boardList.sortedByDescending { it.timestamp }
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
-            item {
-                Text(
-                    text = stringResource(R.string.list_board),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-            if (isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+        when {
+            isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
-            } else if (sortedList.isEmpty()) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
+            }
+            sortedList.isEmpty() -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = stringResource(R.string.empty_board),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    item {
                         Text(
-                            text = stringResource(R.string.empty_board),
-                            style = MaterialTheme.typography.bodyMedium
+                            text = stringResource(R.string.list_board),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
-                }
-            } else {
-                items(sortedList) { board ->
-                    BoardCard(
-                        board = board,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    items(sortedList) { board ->
+                        BoardCard(
+                            board = board,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                 }
             }
         }

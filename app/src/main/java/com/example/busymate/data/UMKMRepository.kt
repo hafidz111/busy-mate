@@ -2,6 +2,7 @@ package com.example.busymate.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import com.example.busymate.model.Board
 import com.example.busymate.model.Category
 import com.example.busymate.model.UMKM
@@ -210,13 +211,53 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
     fun getBoard(): Flow<Result<List<Board>>> = callbackFlow {
         database.child("board").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<Board>()
+                val boardList = mutableListOf<Board>()
+                val tempList = mutableListOf<Board>()
+                val userIds = mutableSetOf<String>()
+
                 for (boardSnap in snapshot.children) {
                     val board = boardSnap.getValue(Board::class.java)
-                    board?.let { list.add(it) }
+                    board?.let {
+                        tempList.add(it)
+                        userIds.add(it.umkm.id)
+                    }
                 }
-                trySendBlocking(Result.success(list))
-                close()
+
+                if (userIds.isEmpty()) {
+                    trySendBlocking(Result.success(emptyList()))
+                    close()
+                    return
+                }
+
+                database.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(userSnapshot: DataSnapshot) {
+                        for (board in tempList) {
+                            val userId = board.umkm.id
+                            val userNode = userSnapshot.child(userId)
+
+                            val name = userNode.child("name").getValue(String::class.java).orEmpty()
+                            val photoUrl =
+                                userNode.child("photoUrl").getValue(String::class.java).orEmpty()
+
+                            board.umkm = board.umkm.copy(
+                                nameUMKM = name,
+                                imageUMKM = photoUrl
+                            )
+                            boardList.add(board)
+                            Log.d(
+                                "getBoard",
+                                "Fetching for userId: $userId, name: $name, photoUrl: $photoUrl"
+                            )
+                        }
+                        trySendBlocking(Result.success(boardList))
+                        close()
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        trySendBlocking(Result.failure(error.toException()))
+                        close()
+                    }
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -224,7 +265,8 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                 close()
             }
         })
-        awaitClose {}
+
+        awaitClose { }
     }
     fun createBoard(board: Board): Flow<Result<Unit>> = callbackFlow {
         val key = database.child("board").push().key!!

@@ -5,6 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -119,6 +124,19 @@ fun BusyMateApp(
                 BottomNavigationBar(navController)
             }
         },
+        floatingActionButton = {
+            if (currentRoute == Screen.Board.route) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Screen.CreateBoard.route) },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.create_board)
+                    )
+                }
+            }
+        },
         modifier = modifier
     ) { innerPadding ->
         NavHost(
@@ -154,7 +172,6 @@ fun BusyMateApp(
             }
             composable(Screen.Board.route) {
                 BoardScreen(
-                    navController = navController
                 )
             }
             composable(Screen.Setting.route) {

@@ -60,7 +60,6 @@ fun CreateBoardScreen(
     var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     var description by remember { mutableStateOf("") }
     var isPrivate by remember { mutableStateOf(false) }
-    val umkm = UMKM()
 
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -70,7 +69,6 @@ fun CreateBoardScreen(
     LaunchedEffect(created) {
         if (created) {
             onCreateSuccess()
-            // kembalikan flag di ViewModel kalau perlu
         }
     }
 
@@ -113,14 +111,11 @@ fun CreateBoardScreen(
                     return@Button
                 }
 
-                // mulai coroutine upload + create
                 CoroutineScope(Dispatchers.IO).launch {
-                    // upload jika ada gambar, else pakai empty string
                     val imageUrl = selectedImageUri?.let { uri ->
                         uploadImage(uri, context) ?: ""
                     } ?: ""
 
-                    // kalau user pilih gambar tapi upload gagal (kembalikan null)
                     if (selectedImageUri != null && imageUrl.isEmpty()) {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(context, "Gagal upload gambarnya", Toast.LENGTH_SHORT).show()
@@ -128,9 +123,10 @@ fun CreateBoardScreen(
                         return@launch
                     }
 
-                    // bikin Board dengan imageUrl (bisa kosong)
+                    val umkm = UMKM(id = uid)
+
                     val board = Board(
-                        id = "", // nanti generate di repository
+                        id = "",
                         description = description,
                         umkm = umkm,
                         imageUrl = imageUrl,

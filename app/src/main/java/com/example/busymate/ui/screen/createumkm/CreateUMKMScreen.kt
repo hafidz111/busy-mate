@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.create
+package com.example.busymate.ui.screen.createumkm
 
 import android.net.Uri
 import android.widget.Toast
@@ -33,10 +33,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
-import com.example.busymate.model.Board
 import com.example.busymate.model.UMKM
 import com.example.busymate.ui.ViewModelFactory
-import com.example.busymate.ui.component.FormBoard
+import com.example.busymate.ui.component.FormUMKM
 import com.example.busymate.utils.uploadImage
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
@@ -45,10 +44,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun CreateBoardScreen(
+fun CreateUMKMScreen(
     modifier: Modifier,
     onCreateSuccess: () -> Unit,
-    viewModel: CreateBoardViewModel = viewModel(
+    viewModel: CreateUMKMViewModel = viewModel(
         factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
     )
 ) {
@@ -58,8 +57,11 @@ fun CreateBoardScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var name by remember { mutableStateOf("") }
+    var contact by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var isPrivate by remember { mutableStateOf(false) }
 
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -67,9 +69,7 @@ fun CreateBoardScreen(
         }
 
     LaunchedEffect(created) {
-        if (created) {
-            onCreateSuccess()
-        }
+        if (created) onCreateSuccess()
     }
 
     LaunchedEffect(errorMessage) {
@@ -84,58 +84,61 @@ fun CreateBoardScreen(
             .padding(12.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
-            stringResource(R.string.form_board),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(Modifier.height(16.dp))
+        Text(stringResource(R.string.form_umkm), fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-        FormBoard(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FormUMKM(
+            name = name,
+            onNameChange = { name = it },
+            contact = contact,
+            onContactChange = { contact = it },
+            location = location,
+            onLocationChange = { location = it },
+            category = category,
+            onCategoryChange = { category = it },
             description = description,
             onDescriptionChange = { description = it },
             selectedImageUri = selectedImageUri,
             onImageClick = { imagePickerLauncher.launch("image/*") },
-            imageUrl = "",
-            isPrivate = isPrivate,
-            onPrivacyChange = { isPrivate = it }
+            imageUrl = ""
         )
-
-        Spacer(Modifier.height(24.dp))
 
         Button(
             onClick = {
-                val uid = FirebaseAuth.getInstance().currentUser?.uid
-                if (uid == null) {
-                    Toast.makeText(context, "Login dulu ya, Boss!", Toast.LENGTH_SHORT).show()
+                if (selectedImageUri == null) {
+                    Toast.makeText(context, "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT)
+                        .show()
                     return@Button
                 }
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val imageUrl = selectedImageUri?.let { uri ->
-                        uploadImage(uri, context) ?: ""
-                    } ?: ""
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@Button
 
-                    if (selectedImageUri != null && imageUrl.isEmpty()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val imageUrl = uploadImage(selectedImageUri!!, context)
+
+                    if (imageUrl == null) {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "Gagal upload gambarnya", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Gagal upload gambar", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         return@launch
                     }
 
-                    val umkm = UMKM(id = uid)
-
-                    val board = Board(
-                        id = "",
+                    val umkm = UMKM(
+                        id = uid,
+                        imageUMKM = imageUrl,
+                        nameUMKM = name,
+                        contact = contact,
+                        location = location,
+                        category = category,
                         description = description,
-                        umkm = umkm,
-                        imageUrl = imageUrl,
-                        isPrivate = isPrivate,
-                        timestamp = System.currentTimeMillis()
+                        tags = category.split(",").map(String::trim),
+                        products = emptyList()
                     )
 
                     withContext(Dispatchers.Main) {
-                        viewModel.createBoard(board)
+                        viewModel.createUMKM(umkm)
                     }
                 }
             },

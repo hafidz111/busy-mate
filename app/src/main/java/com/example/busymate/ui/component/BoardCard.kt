@@ -26,17 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.busymate.model.Board
-import com.example.busymate.model.formatTimestamp
-import com.google.firebase.auth.FirebaseAuth
+import com.example.busymate.utils.formatTimestamp
 
 @Composable
 fun BoardCard(
     board: Board,
     modifier: Modifier = Modifier
 ) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val photoUrl = user?.photoUrl
-
     Card(
         modifier = modifier
             .padding(vertical = 6.dp)
@@ -49,12 +45,12 @@ fun BoardCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (photoUrl != null) {
+                if (board.umkm.imageUMKM.isNotEmpty()) {
                     AsyncImage(
                         model = board.umkm.imageUMKM,
                         contentDescription = "Profile Picture",
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(40.dp)
                             .clip(CircleShape)
                     )
                 } else {
@@ -62,7 +58,7 @@ fun BoardCard(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Default Profile",
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(40.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -72,7 +68,10 @@ fun BoardCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = formatTimestamp(board.timestamp), style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = formatTimestamp(board.timestamp),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }

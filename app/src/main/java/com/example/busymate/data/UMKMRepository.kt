@@ -23,7 +23,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
     private val database = FirebaseDatabase.getInstance().reference
 
     fun login(email: String, password: String): Flow<Result<FirebaseUser>> = callbackFlow {
-         firebaseAuth.signInWithEmailAndPassword(email, password)
+        firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     firebaseAuth.currentUser?.let {
@@ -37,43 +37,55 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose {}
     }
 
-    fun register(email: String, password: String, name: String): Flow<Result<AuthResult>> = callbackFlow {
-        val authListener = firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = task.result?.user
-                    val uid = user?.uid.orEmpty()
+    fun register(email: String, password: String, name: String): Flow<Result<AuthResult>> =
+        callbackFlow {
+            val authListener = firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = task.result?.user
+                        val uid = user?.uid.orEmpty()
 
-                    val userData = mapOf(
-                        "email" to email, "name" to name
-                    )
-                    database.child("users").child(uid).setValue(userData)
+                        val userData = mapOf(
+                            "email" to email,
+                            "name" to name,
+                            "photoUrl" to user?.photoUrl.toString()
+                        )
+                        database.child("users").child(uid).setValue(userData)
 
-                    val profileUpdates =
-                        UserProfileChangeRequest.Builder().setDisplayName(name).build()
+                        val profileUpdates =
+                            UserProfileChangeRequest.Builder().setDisplayName(name)
+                                .setPhotoUri(user?.photoUrl).build()
 
-                    user?.updateProfile(profileUpdates)?.addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            FirebaseAuth.getInstance().currentUser?.reload()
-                                ?.addOnCompleteListener {
-                                    trySendBlocking(Result.success(task.result))
-                                    close()
-                                }
-                        } else {
-                            trySendBlocking(Result.failure(task.exception ?: Exception("Gagal update profile")))
+                        user?.updateProfile(profileUpdates)?.addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                FirebaseAuth.getInstance().currentUser?.reload()
+                                    ?.addOnCompleteListener {
+                                        trySendBlocking(Result.success(task.result))
+                                        close()
+                                    }
+                            } else {
+                                trySendBlocking(
+                                    Result.failure(
+                                        task.exception ?: Exception("Gagal update profile")
+                                    )
+                                )
+                                close()
+                            }
+                        }?.addOnFailureListener {
+                            trySendBlocking(Result.failure(it))
                             close()
                         }
-                    }?.addOnFailureListener {
-                        trySendBlocking(Result.failure(it))
+                    } else {
+                        trySendBlocking(
+                            Result.failure(
+                                task.exception ?: Exception("Register Gagal")
+                            )
+                        )
                         close()
                     }
-                } else {
-                    trySendBlocking(Result.failure(task.exception ?: Exception("Register Gagal")))
-                    close()
                 }
-            }
-        awaitClose { authListener.isCanceled }
-    }
+            awaitClose { authListener.isCanceled }
+        }
 
     @SuppressLint("UseKtx")
     fun logout(context: Context) {
@@ -207,6 +219,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
 
         awaitClose {}
     }
+
     // Board
     fun getBoard(): Flow<Result<List<Board>>> = callbackFlow {
         database.child("board").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -268,6 +281,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
 
         awaitClose { }
     }
+
     fun createBoard(board: Board): Flow<Result<Unit>> = callbackFlow {
         val key = database.child("board").push().key!!
         board.id = key

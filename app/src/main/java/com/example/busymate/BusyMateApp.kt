@@ -26,13 +26,14 @@ import com.example.busymate.ui.component.BottomNavigationBar
 import com.example.busymate.ui.component.TopBar
 import com.example.busymate.ui.navigation.Screen
 import com.example.busymate.ui.screen.board.BoardScreen
-import com.example.busymate.ui.screen.create.CreateBoardScreen
+import com.example.busymate.ui.screen.createboard.CreateBoardScreen
 import com.example.busymate.ui.screen.detail.DetailScreen
 import com.example.busymate.ui.screen.home.HomeScreen
 import com.example.busymate.ui.screen.login.LoginScreen
-import com.example.busymate.ui.screen.profile.ProfileUMKMScreen
-import com.example.busymate.ui.screen.create.CreateUMKMScreen
-import com.example.busymate.ui.screen.edit.EditUMKMScreen
+import com.example.busymate.ui.screen.profileumkm.ProfileUMKMScreen
+import com.example.busymate.ui.screen.createumkm.CreateUMKMScreen
+import com.example.busymate.ui.screen.editumkm.EditUMKMScreen
+import com.example.busymate.ui.screen.profileuser.ProfileUserScreen
 import com.example.busymate.ui.screen.register.RegisterScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
 
@@ -116,6 +117,14 @@ fun BusyMateApp(
                             showBackButton = true
                         )
                     }
+
+                    Screen.ProfileUser.route -> {
+                        TopBar(
+                            title = stringResource(R.string.profile_user),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
                 }
             }
         },
@@ -184,7 +193,8 @@ fun BusyMateApp(
                     },
                     onProfileUMKM = {
                         navController.navigate("profile_umkm")
-                    }
+                    },
+                    navController = navController
                 )
             }
             composable(
@@ -218,6 +228,9 @@ fun BusyMateApp(
                     uid = id,
                     navController = navController
                 )
+            }
+            composable(Screen.ProfileUser.route) {
+                ProfileUserScreen()
             }
             composable(Screen.CreateBoard.route) {
                 CreateBoardScreen(

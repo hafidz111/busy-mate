@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.edit
+package com.example.busymate.ui.screen.editumkm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

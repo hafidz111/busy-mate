@@ -1,4 +1,4 @@
-package com.example.busymate.model
+package com.example.busymate.utils
 
 import java.text.SimpleDateFormat
 import java.util.Date

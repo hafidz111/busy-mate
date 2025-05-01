@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.profile
+package com.example.busymate.ui.screen.profileumkm
 
 import android.annotation.SuppressLint
 import android.icu.text.DecimalFormat
@@ -140,9 +140,11 @@ fun ProfileUMKMScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(stringResource(R.string.price), fontWeight = FontWeight.Bold)
-                val symbols = DecimalFormatSymbols(Locale.GERMANY).apply{groupingSeparator = '.'; decimalSeparator = ','}
+                val symbols = DecimalFormatSymbols(Locale.GERMANY).apply {
+                    groupingSeparator = '.'; decimalSeparator = ','
+                }
                 val currencyText = DecimalFormat("#,###", symbols).format(data.price)
-                Text(currencyText )
+                Text(currencyText)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

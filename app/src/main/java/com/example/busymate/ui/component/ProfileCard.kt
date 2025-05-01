@@ -1,5 +1,6 @@
 package com.example.busymate.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.example.busymate.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileCard() {
+fun ProfileCard(navController: NavController) {
     val user = FirebaseAuth.getInstance().currentUser
     val name = user?.displayName ?: "Guest User"
     val email = user?.email ?: "No Email"
@@ -36,7 +39,10 @@ fun ProfileCard() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                navController.navigate(Screen.ProfileUser.route)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {

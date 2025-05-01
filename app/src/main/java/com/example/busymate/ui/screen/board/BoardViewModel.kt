@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class BoardViewModel(private val repository: UMKMRepository): ViewModel() {
+class BoardViewModel(
+    private val repository: UMKMRepository
+) : ViewModel() {
     private val _boardList = MutableStateFlow<List<Board>>(emptyList())
     val boardList: StateFlow<List<Board>> = _boardList
 

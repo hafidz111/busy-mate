@@ -47,7 +47,9 @@ fun BoardScreen(
     Box(modifier = modifier.fillMaxSize()) {
         if (!errorMessage.isNullOrEmpty()) {
             Snackbar(
-                modifier = Modifier.align(Alignment.TopCenter).padding(16.dp)
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
             ) {
                 Text(text = errorMessage!!)
             }
@@ -59,6 +61,7 @@ fun BoardScreen(
                     CircularProgressIndicator()
                 }
             }
+
             sortedList.isEmpty() -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
@@ -67,6 +70,7 @@ fun BoardScreen(
                     )
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),

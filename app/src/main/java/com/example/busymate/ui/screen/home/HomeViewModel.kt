@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val repository: UMKMRepository) : ViewModel() {
+class HomeViewModel(
+    private val repository: UMKMRepository
+) : ViewModel() {
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> = _categories
 
@@ -42,6 +44,8 @@ class HomeViewModel(private val repository: UMKMRepository) : ViewModel() {
                 result.onSuccess { list ->
                     val allCategory = Category(0, "Semua")
                     _categories.value = listOf(allCategory) + list
+
+                    _selectedCategory.value = allCategory
                 }.onFailure { exception ->
                     _errorMessage.value = "Gagal memuat kategori: ${exception.localizedMessage}"
                 }

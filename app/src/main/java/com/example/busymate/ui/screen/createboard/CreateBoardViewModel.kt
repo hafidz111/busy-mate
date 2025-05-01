@@ -1,14 +1,14 @@
-package com.example.busymate.ui.screen.create
+package com.example.busymate.ui.screen.createboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.busymate.data.UMKMRepository
-import com.example.busymate.model.UMKM
+import com.example.busymate.model.Board
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CreateUMKMViewModel(
+class CreateBoardViewModel (
     private val repository: UMKMRepository
 ) : ViewModel() {
 
@@ -21,12 +21,12 @@ class CreateUMKMViewModel(
     private val _created = MutableStateFlow(false)
     val created: StateFlow<Boolean> = _created
 
-    fun createUMKM(umkm: UMKM) {
+    fun createBoard(board: Board) {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
 
-            repository.createUMKM(umkm)
+            repository.createBoard(board)
                 .collect { result ->
                     _isLoading.value = false
                     result.onSuccess {

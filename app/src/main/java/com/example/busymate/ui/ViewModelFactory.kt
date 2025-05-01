@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.screen.board.BoardViewModel
-import com.example.busymate.ui.screen.create.CreateBoardViewModel
-import com.example.busymate.ui.screen.create.CreateUMKMViewModel
+import com.example.busymate.ui.screen.createboard.CreateBoardViewModel
+import com.example.busymate.ui.screen.createumkm.CreateUMKMViewModel
 import com.example.busymate.ui.screen.detail.DetailViewModel
-import com.example.busymate.ui.screen.edit.EditUMKMViewModel
+import com.example.busymate.ui.screen.editumkm.EditUMKMViewModel
 import com.example.busymate.ui.screen.home.HomeViewModel
 import com.example.busymate.ui.screen.login.LoginViewModel
-import com.example.busymate.ui.screen.profile.ProfileUMKMViewModel
+import com.example.busymate.ui.screen.profileumkm.ProfileUMKMViewModel
+import com.example.busymate.ui.screen.profileuser.ProfileUserViewModel
 import com.example.busymate.ui.screen.register.RegisterViewModel
 import com.example.busymate.ui.screen.setting.SettingViewModel
 
@@ -19,7 +20,9 @@ class ViewModelFactory(private val repository: UMKMRepository) :
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
+            return RegisterViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(repository) as T
@@ -33,8 +36,8 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return CreateUMKMViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(EditUMKMViewModel::class.java)) {
             return EditUMKMViewModel(repository) as T
-        } else if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
-            return RegisterViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(ProfileUserViewModel::class.java)) {
+            return ProfileUserViewModel() as T
         } else if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
             return BoardViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(CreateBoardViewModel::class.java)) {

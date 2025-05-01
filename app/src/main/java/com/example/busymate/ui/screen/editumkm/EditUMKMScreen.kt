@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.edit
+package com.example.busymate.ui.screen.editumkm
 
 import android.net.Uri
 import android.widget.Toast
@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.busymate.R
@@ -62,7 +61,6 @@ fun EditUMKMScreen(
     var nameUMKM by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
     var contact by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var imageUMKM by remember { mutableStateOf("") }
@@ -84,7 +82,6 @@ fun EditUMKMScreen(
                         nameUMKM = data.nameUMKM
                         location = data.location
                         description = data.description
-                        price = data.price.toString()
                         contact = data.contact
                         category = data.category
                         imageUMKM = data.imageUMKM
@@ -124,12 +121,11 @@ fun EditUMKMScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             FormUMKM(
-                name = nameUMKM,            onNameChange = { nameUMKM = it },
-                location = location,        onLocationChange = { location = it },
-                category = category,        onCategoryChange = { category = it },
-                description = description,  onDescriptionChange = { description = it },
-                price = price,              onPriceChange = {if(it.isDigitsOnly() )price = it },
-                contact = contact,          onContactChange = { contact = it },
+                name = nameUMKM, onNameChange = { nameUMKM = it },
+                location = location, onLocationChange = { location = it },
+                category = category, onCategoryChange = { category = it },
+                description = description, onDescriptionChange = { description = it },
+                contact = contact, onContactChange = { contact = it },
 
                 imageUrl = imageUMKM,
                 selectedImageUri = selectedImageUri,
@@ -156,13 +152,11 @@ fun EditUMKMScreen(
                             return@launch
                         }
 
-                        val validatedPrice = if (price.isBlank() ){ 0 } else { price.toLong() }
                         val updatedUMKM = UMKM(
                             id = uid,
                             nameUMKM = nameUMKM,
                             location = location,
                             description = description,
-                            price = validatedPrice,
                             contact = contact,
                             category = category,
                             imageUMKM = imageUrl,

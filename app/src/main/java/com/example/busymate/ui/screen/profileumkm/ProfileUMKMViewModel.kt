@@ -1,4 +1,4 @@
-package com.example.busymate.ui.screen.profile
+package com.example.busymate.ui.screen.profileumkm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ProfileUMKMViewModel(private val repository: UMKMRepository) : ViewModel() {
-
+class ProfileUMKMViewModel(
+    private val repository: UMKMRepository
+) : ViewModel() {
     private val _umkmData = MutableStateFlow<UMKM?>(null)
     val umkmData: StateFlow<UMKM?> = _umkmData
 

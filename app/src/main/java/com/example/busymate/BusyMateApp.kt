@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -22,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.busymate.model.ProductItem
 import com.example.busymate.ui.component.BottomNavigationBar
 import com.example.busymate.ui.component.TopBar
 import com.example.busymate.ui.navigation.Screen
@@ -33,6 +38,7 @@ import com.example.busymate.ui.screen.login.LoginScreen
 import com.example.busymate.ui.screen.profileumkm.ProfileUMKMScreen
 import com.example.busymate.ui.screen.createumkm.CreateUMKMScreen
 import com.example.busymate.ui.screen.editumkm.EditUMKMScreen
+import com.example.busymate.ui.screen.manageproduct.ManageProductScreen
 import com.example.busymate.ui.screen.profileuser.ProfileUserScreen
 import com.example.busymate.ui.screen.register.RegisterScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
@@ -46,6 +52,9 @@ fun BusyMateApp(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    var showForm by remember { mutableStateOf(false) }
+    var editingProduct by remember { mutableStateOf<ProductItem?>(null) }
 
     Scaffold(
         topBar = {
@@ -125,6 +134,14 @@ fun BusyMateApp(
                             showBackButton = true
                         )
                     }
+
+                    Screen.ManageProduct.route -> {
+                        TopBar(
+                            title = stringResource(R.string.manage_products),
+                            navController = navController,
+                            showBackButton = true
+                        )
+                    }
                 }
             }
         },
@@ -134,15 +151,32 @@ fun BusyMateApp(
             }
         },
         floatingActionButton = {
-            if (currentRoute == Screen.Board.route) {
-                FloatingActionButton(
-                    onClick = { navController.navigate(Screen.CreateBoard.route) },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.create_board)
-                    )
+            when (currentRoute) {
+                Screen.Board.route -> {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(Screen.CreateBoard.route) },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.create_board)
+                        )
+                    }
+                }
+
+                Screen.ManageProduct.route -> {
+                    FloatingActionButton(
+                        onClick = {
+                            editingProduct = null
+                            showForm = true
+                        },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingBag,
+                            contentDescription = stringResource(R.string.create_product)
+                        )
+                    }
                 }
             }
         },
@@ -237,6 +271,26 @@ fun BusyMateApp(
                     onCreateSuccess = { navController.popBackStack() },
                     modifier = Modifier
                 )
+            }
+            composable(Screen.ManageProduct.route) {
+                val userId = navController.currentBackStackEntry?.arguments?.getString("userId")
+                if (userId != null) {
+                    ManageProductScreen(
+                        userId = userId,
+                        showForm = showForm,
+                        editingProduct = editingProduct,
+                        onEdit = {
+                            editingProduct = it
+                            showForm = true
+                        },
+                        onDismissForm = {
+                            showForm = false
+                        },
+                        onNavigateToCreateUMKM = {
+                            navController.navigate("create_umkm")
+                        }
+                    )
+                }
             }
         }
     }

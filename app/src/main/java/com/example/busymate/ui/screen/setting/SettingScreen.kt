@@ -46,7 +46,12 @@ fun SettingScreen(
         SettingListItem(
             icon = Icons.Default.Shop,
             title = stringResource(R.string.manage_products),
-            onClick = onProfileUMKM
+            onClick = {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                userId?.let {
+                    navController.navigate("manage_product/$it")
+                }
+            }
         )
 
         SettingListItem(

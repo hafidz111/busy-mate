@@ -44,9 +44,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -104,7 +106,7 @@ fun ProfileUserScreen(
                     },
                     modifier = Modifier.align(Alignment.TopEnd)
                 ) {
-                    Text("Simpan")
+                    Text(stringResource(R.string.save))
                 }
 
                 Column(
@@ -186,7 +188,7 @@ fun ProfileUserScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text("Nama")
+                    Text(stringResource(R.string.name))
 
                     Spacer(Modifier.height(4.dp))
 
@@ -214,14 +216,14 @@ fun ProfileUserScreen(
                             )
                             Icon(
                                 imageVector = Icons.Default.ChevronRight,
-                                contentDescription = "Edit name"
+                                contentDescription = stringResource(R.string.edit_name)
                             )
                         }
                     }
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text("Email")
+                    Text(stringResource(R.string.email))
 
                     Spacer(Modifier.height(4.dp))
 

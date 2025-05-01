@@ -118,7 +118,8 @@ fun CreateBoardScreen(
 
                     if (selectedImageUri != null && imageUrl.isEmpty()) {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "Gagal upload gambarnya", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Gagal upload gambarnya", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         return@launch
                     }

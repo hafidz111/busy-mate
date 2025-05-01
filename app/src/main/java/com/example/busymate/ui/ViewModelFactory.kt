@@ -10,6 +10,7 @@ import com.example.busymate.ui.screen.detail.DetailViewModel
 import com.example.busymate.ui.screen.editumkm.EditUMKMViewModel
 import com.example.busymate.ui.screen.home.HomeViewModel
 import com.example.busymate.ui.screen.login.LoginViewModel
+import com.example.busymate.ui.screen.manageproduct.ManageProductViewModel
 import com.example.busymate.ui.screen.profileumkm.ProfileUMKMViewModel
 import com.example.busymate.ui.screen.profileuser.ProfileUserViewModel
 import com.example.busymate.ui.screen.register.RegisterViewModel
@@ -42,6 +43,8 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return BoardViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(CreateBoardViewModel::class.java)) {
             return CreateBoardViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(ManageProductViewModel::class.java)) {
+            return ManageProductViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

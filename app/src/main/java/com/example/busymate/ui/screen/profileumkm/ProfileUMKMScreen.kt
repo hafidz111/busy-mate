@@ -1,8 +1,6 @@
 package com.example.busymate.ui.screen.profileumkm
 
 import android.annotation.SuppressLint
-import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
 import android.net.Uri
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -25,12 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
@@ -46,7 +43,7 @@ import com.example.busymate.model.Category
 import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.CategoryChip
 import com.example.busymate.ui.component.ProductCard
-import java.util.Locale
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UseKtx")
 @Composable
@@ -59,11 +56,13 @@ fun ProfileUMKMScreen(
 ) {
     val user = FirebaseAuth.getInstance().currentUser
     val umkmData by viewModel.umkmData.collectAsState()
+    val products by viewModel.productList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     LaunchedEffect(user?.uid) {
         user?.uid?.let { uid ->
             viewModel.fetchUMKM(uid)
+            viewModel.getProductsByUMKM(uid)
         }
     }
 
@@ -128,23 +127,17 @@ fun ProfileUMKMScreen(
                     fontWeight = FontWeight.Bold
                 )
 
-                if (data.products.isEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                if (products.isEmpty()) {
                     Text(stringResource(R.string.empty_product), color = Color.Gray)
                 } else {
                     LazyRow {
-                        items(data.products) { product ->
+                        items(products) { product ->
                             ProductCard(product = product)
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.price), fontWeight = FontWeight.Bold)
-                val symbols = DecimalFormatSymbols(Locale.GERMANY).apply {
-                    groupingSeparator = '.'; decimalSeparator = ','
-                }
-                val currencyText = DecimalFormat("#,###", symbols).format(data.price)
-                Text(currencyText)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

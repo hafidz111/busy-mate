@@ -41,7 +41,17 @@
     <string name="list_board">Daftar Postingan</string>
     <string name="empty_board">Belum ada Postingan</string>
     <string name="create_board">Buat Boards</string>
-    <string name="price">Total Harga</string>
     <string name="manage_products">Kelola Produk</string>
     <string name="profile_user">Profil User</string>
+    <string name="create_product">Buat produk</string>
+    <string name="no_store_yet">Silakan buat UMKM terlebih dahulu sebelum menambahkan produk.</string>
+    <string name="image_product">Foto Produk</string>
+    <string name="name_product">Nama: %1$s</string>
+    <string name="price_product">Harga: Rp%1$s</string>
+    <string name="edit_product">Edit Produk</string>
+    <string name="delete_product">Hapus Produk</string>
+    <string name="add_product">Tambah Produk</string>
+    <string name="name">Nama</string>
+    <string name="edit_name">Edit name</string>
+    <string name="email">Email</string>
 </resources>

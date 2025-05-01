@@ -1,5 +1,6 @@
 package com.example.busymate.ui.component
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -21,7 +22,8 @@ import androidx.navigation.NavController
 fun TopBar(
     title: String,
     navController: NavController? = null,
-    showBackButton: Boolean = false
+    showBackButton: Boolean = false,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -41,6 +43,7 @@ fun TopBar(
                 }
             }
         },
+        actions = actions,
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onSurfaceVariant),
         windowInsets = WindowInsets(0.dp)
     )

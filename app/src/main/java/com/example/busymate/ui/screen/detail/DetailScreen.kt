@@ -2,8 +2,6 @@ package com.example.busymate.ui.screen.detail
 
 import android.content.Context
 import android.content.Intent
-import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +49,6 @@ import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.ProductCard
 import com.google.firebase.auth.FirebaseAuth
-import java.util.Locale
 
 @Composable
 fun DetailScreen(
@@ -63,11 +60,13 @@ fun DetailScreen(
 ) {
     val context = LocalContext.current
     val umkm by viewModel.umkm.collectAsState()
+    val products by viewModel.productList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     LaunchedEffect(umkmId) {
         viewModel.getUMKMById(umkmId)
+        viewModel.getProductsByUMKM(umkmId)
     }
 
     if (isLoading) {
@@ -163,25 +162,17 @@ fun DetailScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            if (umkm!!.products.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+
+            if (products.isNotEmpty()) {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(umkm!!.products) { product ->
+                    items(products) { product ->
                         ProductCard(product = product)
                     }
                 }
             } else {
                 Text(stringResource(R.string.empty_product), color = Color.Gray)
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.price),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            val symbols = DecimalFormatSymbols(Locale.GERMANY).apply{groupingSeparator = '.'; decimalSeparator = ','}
-            val currencyText = DecimalFormat("#,###", symbols).format(umkm!!.price)
-            Text(currencyText, style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(24.dp))
 

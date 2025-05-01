@@ -22,7 +22,10 @@ import coil3.compose.AsyncImage
 import com.example.busymate.model.ProductItem
 
 @Composable
-fun ProductCard(product: ProductItem, modifier: Modifier = Modifier) {
+fun ProductCard(
+    product: ProductItem,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .width(150.dp)
@@ -34,7 +37,7 @@ fun ProductCard(product: ProductItem, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(8.dp)
         ) {
             AsyncImage(
-                model = product.image,
+                model = product.imageUrl,
                 contentDescription = product.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

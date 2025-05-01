@@ -12,4 +12,5 @@ sealed class Screen(val route: String) {
     data object EditUMKM : Screen("edit_umkm/{umkmId}")
     data object ProfileUser : Screen("profile_user")
     data object CreateBoard : Screen("create-board")
+    data object ManageProduct : Screen("manage_product/{userId}")
 }

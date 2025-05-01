@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import com.example.busymate.model.Board
 import com.example.busymate.model.Category
+import com.example.busymate.model.ProductItem
 import com.example.busymate.model.UMKM
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -229,6 +230,22 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose {}
     }
 
+    fun hasUMKM(userId: String): Flow<Result<Boolean>> = callbackFlow {
+        database.child("umkm").child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySendBlocking(Result.success(snapshot.exists()))
+                    close()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    trySendBlocking(Result.failure(error.toException()))
+                    close()
+                }
+            })
+        awaitClose { }
+    }
+
     // Board
     fun getBoard(): Flow<Result<List<Board>>> = callbackFlow {
         database.child("board").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -306,5 +323,68 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                 close()
             }
         awaitClose { }
+    }
+
+    fun getProducts(userId: String): Flow<Result<List<ProductItem>>> = callbackFlow {
+        database.child("products").child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<ProductItem>()
+                    for (productSnap in snapshot.children) {
+                        val product = productSnap.getValue(ProductItem::class.java)
+                        product?.let { list.add(it) }
+                    }
+                    trySendBlocking(Result.success(list))
+                    close()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    trySendBlocking(Result.failure(error.toException()))
+                    close()
+                }
+            })
+        awaitClose {}
+    }
+
+    fun addProduct(userId: String, product: ProductItem): Flow<Result<Unit>> = callbackFlow {
+        database.child("products").child(userId).child(product.id)
+            .setValue(product)
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener {
+                trySendBlocking(Result.failure(it))
+                close()
+            }
+        awaitClose {}
+    }
+
+    fun updateProduct(userId: String, product: ProductItem): Flow<Result<Unit>> = callbackFlow {
+        database.child("products").child(userId).child(product.id)
+            .setValue(product)
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener {
+                trySendBlocking(Result.failure(it))
+                close()
+            }
+        awaitClose {}
+    }
+
+    fun deleteProduct(userId: String, productId: String): Flow<Result<Unit>> = callbackFlow {
+        database.child("products").child(userId).child(productId)
+            .removeValue()
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener {
+                trySendBlocking(Result.failure(it))
+                close()
+            }
+        awaitClose {}
     }
 }

@@ -76,20 +76,23 @@ fun RegisterScreen(
             )
 
             Text(
-                modifier = modifier.padding(start = 12.dp), text = stringResource(R.string.please_register_to_login), fontSize = 24.sp
+                modifier = modifier.padding(start = 12.dp),
+                text = stringResource(R.string.please_register_to_login),
+                fontSize = 24.sp
             )
 
-            RegisterField(email = email, password = password, name = name,
-            onEmailChange = {
-                viewModel.onEmailChange(it)
-            }, onPasswordChange = {
-                viewModel.onPasswordChange(it)
-            }, onNickChange = {
-                viewModel.onNameChange(it)
-            }, errorValidation = errorState,
-            onRegisterClick = {
-                viewModel.register()
-            })
+            RegisterField(
+                email = email, password = password, name = name,
+                onEmailChange = {
+                    viewModel.onEmailChange(it)
+                }, onPasswordChange = {
+                    viewModel.onPasswordChange(it)
+                }, onNickChange = {
+                    viewModel.onNameChange(it)
+                }, errorValidation = errorState,
+                onRegisterClick = {
+                    viewModel.register()
+                })
         }
     }
 }

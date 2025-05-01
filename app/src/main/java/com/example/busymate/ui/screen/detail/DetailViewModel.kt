@@ -3,10 +3,13 @@ package com.example.busymate.ui.screen.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.busymate.data.UMKMRepository
+import com.example.busymate.model.ProductItem
 import com.example.busymate.model.UMKM
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -15,6 +18,9 @@ class DetailViewModel(
 ) : ViewModel() {
     private val _umkm = MutableStateFlow<UMKM?>(null)
     val umkm: StateFlow<UMKM?> = _umkm
+
+    private val _productList = MutableStateFlow<List<ProductItem>>(emptyList())
+    val productList: StateFlow<List<ProductItem>> = _productList
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -39,5 +45,14 @@ class DetailViewModel(
                     }
                 }
         }
+    }
+
+    fun getProductsByUMKM(umkmId: String) {
+        repository.getProducts(umkmId).onEach { result ->
+            result.onSuccess { products ->
+                _productList.value = products
+            }.onFailure {
+            }
+        }.launchIn(viewModelScope)
     }
 }

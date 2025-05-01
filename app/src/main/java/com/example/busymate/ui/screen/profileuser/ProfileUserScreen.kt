@@ -165,10 +165,14 @@ fun ProfileUserScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(12.dp)
                 ) {
-                    Box(Modifier.clickable { launcher.launch("image/*") }) {
+                    Box(
+                        Modifier
+                            .clickable { launcher.launch("image/*") }
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 12.dp)
+                    ) {
                         if (user.photoUrl != null) {
                             AsyncImage(
                                 model = user.photoUrl,
@@ -188,7 +192,7 @@ fun ProfileUserScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text(stringResource(R.string.name))
+                    Text(stringResource(R.string.name), modifier = Modifier.padding(start = 32.dp))
 
                     Spacer(Modifier.height(4.dp))
 
@@ -223,7 +227,7 @@ fun ProfileUserScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text(stringResource(R.string.email))
+                    Text(stringResource(R.string.email), modifier = Modifier.padding(start = 32.dp))
 
                     Spacer(Modifier.height(4.dp))
 

@@ -47,11 +47,18 @@ fun BoardCard(
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     Card(
         modifier = modifier
             .padding(vertical = 6.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardBg,
+            contentColor   = contentColor
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {

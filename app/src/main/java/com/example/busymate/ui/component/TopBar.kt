@@ -25,6 +25,10 @@ fun TopBar(
     showBackButton: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
+
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     TopAppBar(
         title = {
             Text(
@@ -44,7 +48,7 @@ fun TopBar(
             }
         },
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onSurfaceVariant),
+        colors = TopAppBarDefaults.topAppBarColors(cardBg, contentColor),
         windowInsets = WindowInsets(0.dp)
     )
 }

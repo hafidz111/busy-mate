@@ -39,6 +39,9 @@ fun ProfileCard(navController: NavController) {
     val email = user?.email ?: "No Email"
     val photoUrl = user?.photoUrl
 
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,6 +49,10 @@ fun ProfileCard(navController: NavController) {
             .clickable {
                 navController.navigate(Screen.ProfileUser.route)
             },
+        colors = CardDefaults.cardColors(
+            containerColor = cardBg,
+            contentColor   = contentColor
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {

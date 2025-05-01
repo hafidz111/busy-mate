@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -72,6 +73,9 @@ fun ProfileUserScreen(
     var newName by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
+
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
 
     LaunchedEffect(Unit) {
         viewModel.fetchCurrentUser()
@@ -168,24 +172,25 @@ fun ProfileUserScreen(
                         .padding(12.dp)
                 ) {
                     Box(
-                        Modifier
+                        modifier = Modifier
+                            .size(160.dp)
+                            .clip(CircleShape)
                             .clickable { launcher.launch("image/*") }
                             .align(Alignment.CenterHorizontally)
-                            .padding(top = 12.dp)
                     ) {
                         if (user.photoUrl != null) {
                             AsyncImage(
                                 model = user.photoUrl,
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(160.dp)
-                                    .clip(CircleShape)
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
                             )
                         } else {
                             Icon(
-                                Icons.Default.AccountCircle,
+                                imageVector = Icons.Default.AccountCircle,
                                 contentDescription = null,
-                                modifier = Modifier.size(160.dp)
+                                modifier = Modifier
+                                    .fillMaxSize()
                             )
                         }
                     }
@@ -204,6 +209,10 @@ fun ProfileUserScreen(
                                 newName = user.displayName ?: ""
                                 showSheet = true
                             },
+                        colors = CardDefaults.cardColors(
+                            containerColor = cardBg,
+                            contentColor   = contentColor
+                        ),
                         elevation = CardDefaults.cardElevation(4.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -235,6 +244,10 @@ fun ProfileUserScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = cardBg,
+                            contentColor   = contentColor
+                        ),
                         elevation = CardDefaults.cardElevation(2.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {

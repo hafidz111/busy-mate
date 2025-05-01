@@ -8,18 +8,29 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+//    primary = Purple80,
+//    secondary = PurpleGrey80,
+//    tertiary = Pink80
+    primary        = LightBlue,
+    onPrimary      = DarkOnSurface,
+    secondary      = LightBlue,
+    onSecondary    = DarkOnSurface,
+    background     = DarkBackground,
+    onBackground   = DarkOnBackground,
+    surface        = DarkSurface,
+    onSurface      = DarkOnSurface,
+    error          = Color(0xFFF87171),
+    onError        = DarkOnSurface
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+//    primary = Purple40,
+//    secondary = PurpleGrey40,
+//    tertiary = Pink40
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -30,13 +41,24 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
+
+    primary        = LightBlue,
+    onPrimary      = LightOnSurface,
+    secondary      = LightBlue,
+    onSecondary    = LightOnSurface,
+    background     = LightBackground,
+    onBackground   = LightOnBackground,
+    surface        = LightSurface,
+    onSurface      = LightOnSurface,
+    error          = Color(0xFFEF4444),
+    onError        = LightOnSurface
 )
 
 @Composable
 fun BusyMateTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

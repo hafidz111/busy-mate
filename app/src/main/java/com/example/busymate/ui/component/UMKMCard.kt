@@ -23,12 +23,19 @@ fun UMKMCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardBg,
+            contentColor   = contentColor
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {

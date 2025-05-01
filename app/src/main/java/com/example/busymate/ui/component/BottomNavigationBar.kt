@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +46,9 @@ fun BottomNavigationBar(
         )
     )
 
+    val primary = MaterialTheme.colorScheme.primary
+    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier
@@ -68,19 +72,22 @@ fun BottomNavigationBar(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.title,
-                        tint = if (selected) MaterialTheme.colorScheme.background
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = item.title
                     )
                 },
                 label = {
                     Text(
-                        text = item.title,
-                        color = if (selected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                        text = item.title
                     )
                 },
-                alwaysShowLabel = true
+                alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor   = primary,
+                    unselectedIconColor = onSurfaceVariant,
+                    selectedTextColor   = primary,
+                    unselectedTextColor = onSurfaceVariant,
+                    indicatorColor      = primary.copy(alpha = 0.2f)
+                )
             )
         }
     }

@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -166,35 +165,34 @@ fun ProfileUserScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(12.dp)
                 ) {
-                    val avatarSize = 160.dp
                     Box(
-                        modifier = Modifier
-                            .size(avatarSize)
-                            .clip(CircleShape)
+                        Modifier
                             .clickable { launcher.launch("image/*") }
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 12.dp)
                     ) {
                         if (user.photoUrl != null) {
                             AsyncImage(
                                 model = user.photoUrl,
                                 contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .size(160.dp)
+                                    .clip(CircleShape)
                             )
                         } else {
                             Icon(
                                 Icons.Default.AccountCircle,
                                 contentDescription = null,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.size(160.dp)
                             )
                         }
                     }
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text(stringResource(R.string.name))
+                    Text(stringResource(R.string.name), modifier = Modifier.padding(start = 32.dp))
 
                     Spacer(Modifier.height(4.dp))
 
@@ -229,7 +227,7 @@ fun ProfileUserScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text(stringResource(R.string.email))
+                    Text(stringResource(R.string.email), modifier = Modifier.padding(start = 32.dp))
 
                     Spacer(Modifier.height(4.dp))
 

@@ -345,12 +345,24 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         database.child("products").child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<ProductItem>()
-                    for (productSnap in snapshot.children) {
-                        val product = productSnap.getValue(ProductItem::class.java)
-                        product?.let { list.add(it) }
+                    val productList = mutableListOf<ProductItem>()
+                    for (child in snapshot.children) {
+                        val value = child.value
+                        if (value is Map<*, *>) {
+                            try {
+                                val product = child.getValue(ProductItem::class.java)
+                                product?.let { productList.add(it) }
+                            } catch (e: Exception) {
+                                Log.e("UMKMRepository", "Failed to parse product ${child.key}", e)
+                            }
+                        } else {
+                            Log.w(
+                                "UMKMRepository",
+                                "Skipping non-object product: key=${child.key}, value=$value"
+                            )
+                        }
                     }
-                    trySendBlocking(Result.success(list))
+                    trySendBlocking(Result.success(productList))
                     close()
                 }
 
@@ -363,8 +375,10 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
     }
 
     fun addProduct(userId: String, product: ProductItem): Flow<Result<Unit>> = callbackFlow {
-        database.child("products").child(userId).child(product.id)
-            .setValue(product)
+        val ref = database.child("products").child(userId).push()
+        val key = ref.key!!
+        val productWithKey = product.copy(id = key)
+        ref.setValue(productWithKey)
             .addOnSuccessListener {
                 trySendBlocking(Result.success(Unit))
                 close()

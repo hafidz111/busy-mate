@@ -1,5 +1,6 @@
 package com.example.busymate.ui.screen.manageproduct
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,14 +23,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.busymate.R
@@ -49,7 +53,9 @@ import com.example.busymate.model.ProductItem
 import com.example.busymate.ui.ViewModelFactory
 import com.example.busymate.ui.component.ProductForm
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageProductScreen(
     userId: String,
@@ -65,6 +71,8 @@ fun ManageProductScreen(
     val productState by viewModel.products.collectAsState()
     val storeState by viewModel.hasStore.collectAsState()
     val context = LocalContext.current
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(userId) {
         viewModel.checkHasStore(userId)
@@ -93,7 +101,6 @@ fun ManageProductScreen(
                 ) {
                     Text(
                         text = state.errorMessage,
-                        color = Color.Red,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -147,50 +154,68 @@ fun ManageProductScreen(
                                         Card(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(vertical = 4.dp),
-                                            elevation = CardDefaults.cardElevation(4.dp)
+                                                .padding(vertical = 6.dp),
+                                            shape = RoundedCornerShape(12.dp),
+                                            elevation = CardDefaults.cardElevation(2.dp)
                                         ) {
-                                            Row(modifier = Modifier.padding(16.dp)) {
-                                                AsyncImage(
-                                                    model = product.imageUrl,
-                                                    contentDescription = stringResource(R.string.image_product),
-                                                    contentScale = ContentScale.Crop,
+                                            Box(modifier = Modifier.fillMaxWidth()) {
+                                                Column(
                                                     modifier = Modifier
-                                                        .size(80.dp)
-                                                        .clip(RoundedCornerShape(8.dp))
-                                                )
-
-                                                Spacer(modifier = Modifier.width(16.dp))
-
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        stringResource(
-                                                            R.string.name_product,
-                                                            product.name
-                                                        ),
-                                                        style = MaterialTheme.typography.titleMedium
-                                                    )
-                                                    Text(
-                                                        stringResource(
-                                                            R.string.price_product,
-                                                            product.price
-                                                        )
-                                                    )
-                                                }
-
-                                                Row {
+                                                        .align(Alignment.CenterEnd)
+                                                        .padding(8.dp)
+                                                ) {
                                                     IconButton(onClick = { onEdit(product) }) {
                                                         Icon(
-                                                            Icons.Default.Edit,
-                                                            stringResource(R.string.edit_product)
+                                                            imageVector = Icons.Default.Edit,
+                                                            contentDescription = stringResource(R.string.edit_product),
+                                                            tint = MaterialTheme.colorScheme.onSurface
                                                         )
                                                     }
                                                     IconButton(onClick = {
                                                         viewModel.deleteProduct(userId, product.id)
                                                     }) {
                                                         Icon(
-                                                            Icons.Default.Delete,
-                                                            stringResource(R.string.delete_product)
+                                                            imageVector = Icons.Default.Delete,
+                                                            contentDescription = stringResource(R.string.delete_product),
+                                                            tint = MaterialTheme.colorScheme.onSurface
+                                                        )
+                                                    }
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(16.dp)
+                                                ) {
+                                                    AsyncImage(
+                                                        model = product.imageUrl,
+                                                        contentDescription = stringResource(R.string.image_product),
+                                                        contentScale = ContentScale.Crop,
+                                                        modifier = Modifier
+                                                            .size(90.dp)
+                                                            .clip(RoundedCornerShape(8.dp))
+                                                            .background(Color.LightGray)
+                                                    )
+
+                                                    Spacer(modifier = Modifier.width(16.dp))
+
+                                                    Column(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .align(Alignment.CenterVertically)
+                                                    ) {
+                                                        Text(
+                                                            stringResource(
+                                                                R.string.name_product,
+                                                                product.name
+                                                            ),
+                                                            style = MaterialTheme.typography.titleMedium
+                                                        )
+                                                        Text(
+                                                            stringResource(
+                                                                R.string.price_product,
+                                                                product.price
+                                                            )
                                                         )
                                                     }
                                                 }
@@ -220,40 +245,36 @@ fun ManageProductScreen(
     }
 
     if (showForm) {
-        Dialog(onDismissRequest = onDismissForm) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch { bottomSheetState.hide() }
+                onDismissForm()
+            },
+            sheetState = bottomSheetState,
+            dragHandle = null
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = if (editingProduct == null) stringResource(R.string.add_product) else stringResource(
-                            R.string.edit_product
-                        ),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    ProductForm(
-                        initialProduct = editingProduct,
-                        onSubmit = { product, imageUri ->
-                            if (editingProduct == null) {
-                                viewModel.addProduct(context, userId, product, imageUri)
-                            } else {
-                                viewModel.editProduct(userId, product)
-                            }
-                            onDismissForm()
-                        },
-                        onCancel = onDismissForm
-                    )
-                }
+                ProductForm(
+                    initialProduct = editingProduct,
+                    onSubmit = { product, imageUri ->
+                        if (editingProduct == null) {
+                            viewModel.addProduct(context, userId, product, imageUri)
+                        } else {
+                            viewModel.editProduct(userId, product)
+                        }
+                        scope.launch { bottomSheetState.hide() }
+                        onDismissForm()
+                    },
+                    onCancel = {
+                        scope.launch { bottomSheetState.hide() }
+                        onDismissForm()
+                    }
+                )
             }
         }
     }

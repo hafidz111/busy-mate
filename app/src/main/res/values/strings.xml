@@ -54,4 +54,8 @@
     <string name="name">Nama</string>
     <string name="edit_name">Edit name</string>
     <string name="email">Email</string>
+    <string name="name_product_text">Nama Produk</string>
+    <string name="price_product_text">Harga Produk</string>
+    <string name="choose_image">Pilih Gambar</string>
+    <string name="close">Tutup</string>
 </resources>

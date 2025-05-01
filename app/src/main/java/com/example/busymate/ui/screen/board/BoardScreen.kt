@@ -34,12 +34,14 @@ fun BoardScreen(
         factory = ViewModelFactory(UMKMRepository(FirebaseAuth.getInstance()))
     )
 ) {
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+
     val boardList by viewModel.boardList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchBoard()
+        viewModel.fetchBoard(currentUserId)
     }
 
     val sortedList = boardList.sortedByDescending { it.timestamp }
@@ -87,6 +89,8 @@ fun BoardScreen(
                     items(sortedList) { board ->
                         BoardCard(
                             board = board,
+                            isOwner   = board.umkm.id == currentUserId,
+                            onDelete  = { viewModel.deleteBoard(board.id) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 8.dp)

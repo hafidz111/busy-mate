@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.model.ProductItem
 import com.example.busymate.model.UMKM
+import com.example.busymate.model.UserProfile
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -27,6 +29,16 @@ class DetailViewModel(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
+
+    //fitur follow
+    private val _ownerUser = MutableStateFlow<UserProfile?>(null)
+    val ownerUser: StateFlow<UserProfile?> = _ownerUser
+
+    private val _isFollowing = MutableStateFlow(false)
+    val isFollowing: StateFlow<Boolean> = _isFollowing
+
+    private val _followLoading = MutableStateFlow(false)
+    val followLoading: StateFlow<Boolean> = _followLoading
 
     fun getUMKMById(umkmId: String) {
         viewModelScope.launch {
@@ -54,5 +66,42 @@ class DetailViewModel(
             }.onFailure {
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun fetchOwner(userId: String) = viewModelScope.launch {
+        repository.getUserProfile(userId)
+            .catch {  }
+            .collect { res ->
+                res.onSuccess { _ownerUser.value = it }
+            }
+    }
+
+    fun checkFollowing(currentUserId: String, profileUserId: String) = viewModelScope.launch {
+        repository.isFollowing(currentUserId, profileUserId)
+            .catch { /* log */ }
+            .collect { res ->
+                res.onSuccess { _isFollowing.value = it }
+            }
+    }
+
+    fun toggleFollow(profileUserId: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        viewModelScope.launch {
+            _followLoading.value = true
+            if (!_isFollowing.value) {
+                repository.followUser(currentUserId, profileUserId)
+                    .onEach { result ->
+                        result.onSuccess { _isFollowing.value = true }
+                    }
+                    .launchIn(this)
+            } else {
+                repository.unfollowUser(currentUserId, profileUserId)
+                    .onEach { result ->
+                        result.onSuccess { _isFollowing.value = false }
+                    }
+                    .launchIn(this)
+            }
+            _followLoading.value = false
+        }
     }
 }

@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -168,20 +169,25 @@ fun ProfileUserScreen(
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(Modifier.clickable { launcher.launch("image/*") }) {
+                    val avatarSize = 160.dp
+                    Box(
+                        modifier = Modifier
+                            .size(avatarSize)
+                            .clip(CircleShape)
+                            .clickable { launcher.launch("image/*") }
+                    ) {
                         if (user.photoUrl != null) {
                             AsyncImage(
                                 model = user.photoUrl,
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(160.dp)
-                                    .clip(CircleShape)
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
                             )
                         } else {
                             Icon(
                                 Icons.Default.AccountCircle,
                                 contentDescription = null,
-                                modifier = Modifier.size(160.dp)
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
                     }

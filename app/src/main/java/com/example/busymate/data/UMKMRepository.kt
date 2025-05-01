@@ -7,6 +7,7 @@ import com.example.busymate.model.Board
 import com.example.busymate.model.Category
 import com.example.busymate.model.ProductItem
 import com.example.busymate.model.UMKM
+import com.example.busymate.model.UserProfile
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -325,6 +326,21 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose { }
     }
 
+    fun deleteBoard(boardId: String): Flow<Result<Unit>> = callbackFlow {
+        database.child("board")
+            .child(boardId)
+            .removeValue()
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener {
+                trySendBlocking(Result.failure(it))
+                close()
+            }
+        awaitClose { }
+    }
+
     fun getProducts(userId: String): Flow<Result<List<ProductItem>>> = callbackFlow {
         database.child("products").child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -386,5 +402,90 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                 close()
             }
         awaitClose {}
+    }
+
+    //fitur follow
+    fun getUserProfile(userId: String): Flow<Result<UserProfile>> = callbackFlow {
+        database.child("users").child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snap: DataSnapshot) {
+                    val name = snap.child("name").getValue(String::class.java).orEmpty()
+                    val photo = snap.child("photoUrl").getValue(String::class.java).orEmpty()
+                    trySendBlocking(Result.success(UserProfile(userId, name, photo)))
+                    close()
+                }
+                override fun onCancelled(err: DatabaseError) {
+                    trySendBlocking(Result.failure(err.toException()))
+                    close()
+                }
+            })
+        awaitClose { }
+    }
+
+    fun isFollowing(currentUserId: String, targetUserId: String): Flow<Result<Boolean>> = callbackFlow {
+        database.child("following")
+            .child(currentUserId)
+            .child(targetUserId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snap: DataSnapshot) {
+                    trySendBlocking(Result.success(snap.exists()))
+                    close()
+                }
+                override fun onCancelled(err: DatabaseError) {
+                    trySendBlocking(Result.failure(err.toException()))
+                    close()
+                }
+            })
+        awaitClose { }
+    }
+
+    fun followUser(currentUserId: String, targetUserId: String): Flow<Result<Unit>> = callbackFlow {
+        val ref = database.child("following")
+            .child(currentUserId)
+            .child(targetUserId)
+        ref.setValue(true)
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener { e ->
+                trySendBlocking(Result.failure(e))
+                close()
+            }
+        awaitClose { }
+    }
+
+    fun unfollowUser(currentUserId: String, targetUserId: String): Flow<Result<Unit>> = callbackFlow {
+        val ref = database.child("following")
+            .child(currentUserId)
+            .child(targetUserId)
+        ref.removeValue()
+            .addOnSuccessListener {
+                trySendBlocking(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener { e ->
+                trySendBlocking(Result.failure(e))
+                close()
+            }
+        awaitClose { }
+    }
+
+    fun getFollowingList(userId: String): Flow<Result<List<String>>> = callbackFlow {
+        database.child("following")
+            .child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = snapshot.children
+                        .mapNotNull { it.key }  // key = id target yang di-follow
+                    trySendBlocking(Result.success(list))
+                    close()
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    trySendBlocking(Result.failure(error.toException()))
+                    close()
+                }
+            })
+        awaitClose { }
     }
 }

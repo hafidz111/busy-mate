@@ -47,6 +47,7 @@ import coil3.compose.AsyncImage
 import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
+import com.example.busymate.ui.component.OwnerSection
 import com.example.busymate.ui.component.ProductCard
 import com.google.firebase.auth.FirebaseAuth
 
@@ -59,14 +60,24 @@ fun DetailScreen(
     )
 ) {
     val context = LocalContext.current
+
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
     val umkm by viewModel.umkm.collectAsState()
     val products by viewModel.productList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
+    //fitur follow
+    val ownerUser by viewModel.ownerUser.collectAsState()
+    val isFollowing by viewModel.isFollowing.collectAsState()
+    val followLoading by viewModel.followLoading.collectAsState()
+
     LaunchedEffect(umkmId) {
         viewModel.getUMKMById(umkmId)
         viewModel.getProductsByUMKM(umkmId)
+        viewModel.fetchOwner(umkmId)
+        currentUserId?.takeIf { it != umkmId }?.let { viewModel.checkFollowing(it, umkmId) }
     }
 
     if (isLoading) {
@@ -110,93 +121,110 @@ fun DetailScreen(
         context.startActivity(intent)
     }
 
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-        AsyncImage(
-            model = umkm!!.imageUMKM,
-            contentDescription = umkm!!.nameUMKM,
-            contentScale = ContentScale.Crop,
+    umkm?.let { data ->
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-        )
-
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                nameUMKM,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                .verticalScroll(rememberScrollState())
+        ) {
+            AsyncImage(
+                model = umkm!!.imageUMKM,
+                contentDescription = umkm!!.nameUMKM,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
             )
-            Text(umkm!!.location, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                umkm!!.category.split(",").forEach { tag ->
-                    AssistChip(
-                        onClick = {},
-                        label = { Text(tag.trim(), color = MaterialTheme.colorScheme.primary) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                        )
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.description),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(umkm!!.description, style = MaterialTheme.typography.bodyMedium)
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.product),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            if (products.isNotEmpty()) {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(products) { product ->
-                        ProductCard(product = product)
-                    }
-                }
-            } else {
-                Text(stringResource(R.string.empty_product), color = Color.Gray)
+            ownerUser?.let { user ->
+                OwnerSection(
+                    user = user,
+                    isFollowing = isFollowing,
+                    isOwner = (currentUserId == data.id),
+                    followLoading = followLoading,
+                    onToggleFollow = { viewModel.toggleFollow(data.id) },
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    nameUMKM,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(umkm!!.location, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
 
-            Button(
-                onClick = {
-                    if (umkm?.contact.isNullOrEmpty()) {
-                        Toast.makeText(context, "Nomor WhatsApp tidak tersedia", Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        openWhatsApp(
-                            context = context,
-                            rawPhone = umkm!!.contact,
-                            message = context.getString(R.string.message_send, umkm!!.nameUMKM)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    umkm!!.category.split(",").forEach { tag ->
+                        AssistChip(
+                            onClick = {},
+                            label = { Text(tag.trim(), color = MaterialTheme.colorScheme.primary) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                            )
                         )
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(Icons.Default.Phone, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.connect))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    stringResource(R.string.description),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(umkm!!.description, style = MaterialTheme.typography.bodyMedium)
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    stringResource(R.string.product),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                if (products.isNotEmpty()) {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(products) { product ->
+                            ProductCard(product = product)
+                        }
+                    }
+                } else {
+                    Text(stringResource(R.string.empty_product), color = Color.Gray)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        if (umkm?.contact.isNullOrEmpty()) {
+                            Toast.makeText(context, "Nomor WhatsApp tidak tersedia", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            openWhatsApp(
+                                context = context,
+                                rawPhone = umkm!!.contact,
+                                message = context.getString(R.string.message_send, umkm!!.nameUMKM)
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Phone, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.connect))
+                }
             }
         }
     }

@@ -51,27 +51,25 @@ fun OwnerSection(
                 .size(36.dp)
                 .clip(CircleShape)
         ) {
-            if (user.photoUrl.isEmpty()) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Default Avatar",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
-                )
-            } else {
+            if (user.photoUrl.isNullOrBlank()) {
                 AsyncImage(
                     model = user.photoUrl,
-                    contentDescription = "Foto pemilik UMKM",
+                    contentDescription = "Profile Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Default Profile",
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
         }
 
         Spacer(Modifier.width(8.dp))
 
-        // Nama & deskripsi
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.displayName,

@@ -26,11 +26,18 @@ fun ProductCard(
     product: ProductItem,
     modifier: Modifier = Modifier
 ) {
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     Card(
         modifier = modifier
             .width(150.dp)
             .height(150.dp),
         shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardBg,
+            contentColor   = contentColor
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(

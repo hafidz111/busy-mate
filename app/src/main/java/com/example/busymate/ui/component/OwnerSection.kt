@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,8 +47,8 @@ fun OwnerSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = modifier
-                .size(56.dp)
+            modifier = Modifier
+                .size(36.dp)
                 .clip(CircleShape)
         ) {
             if (user.photoUrl.isEmpty()) {
@@ -56,7 +57,7 @@ fun OwnerSection(
                     contentDescription = "Default Avatar",
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(8.dp)
+                        .padding(4.dp)
                 )
             } else {
                 AsyncImage(
@@ -68,47 +69,47 @@ fun OwnerSection(
             }
         }
 
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(8.dp))
 
+        // Nama & deskripsi
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.displayName,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                maxLines = 1
             )
             Text(
                 text = "Pemilik UMKM",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
             )
         }
 
-        Spacer(Modifier.width(8.dp))
-
-        if (!isOwner){
+        if (!isOwner) {
             OutlinedButton(
                 onClick = onToggleFollow,
                 enabled = !followLoading,
                 shape = RoundedCornerShape(50),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.height(32.dp)
             ) {
                 if (followLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(18.dp),
+                        modifier = Modifier.size(14.dp),
                         strokeWidth = 2.dp
                     )
                 } else {
                     Icon(
                         imageVector = if (isFollowing) Icons.Default.PersonRemove else Icons.Default.PersonAdd,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size( 14.dp )
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
                         text = if (isFollowing) "Unfollow" else "Follow",
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }

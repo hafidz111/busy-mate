@@ -34,7 +34,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -127,18 +126,6 @@ fun DetailScreen(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            AsyncImage(
-                model = umkm!!.imageUMKM,
-                contentDescription = umkm!!.nameUMKM,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             ownerUser?.let { user ->
                 OwnerSection(
                     user = user,
@@ -149,6 +136,15 @@ fun DetailScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
+
+            AsyncImage(
+                model = umkm!!.imageUMKM,
+                contentDescription = umkm!!.nameUMKM,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
 
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(

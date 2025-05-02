@@ -58,4 +58,5 @@
     <string name="price_product_text">Harga Produk</string>
     <string name="choose_image">Pilih Gambar</string>
     <string name="close">Tutup</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

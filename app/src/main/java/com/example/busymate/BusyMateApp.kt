@@ -42,13 +42,15 @@ import com.example.busymate.ui.screen.manageproduct.ManageProductScreen
 import com.example.busymate.ui.screen.profileuser.ProfileUserScreen
 import com.example.busymate.ui.screen.register.RegisterScreen
 import com.example.busymate.ui.screen.setting.SettingScreen
+import com.example.busymate.ui.screen.setting.SettingViewModel
 
 @Composable
 fun BusyMateApp(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean,
     onLogout: () -> Unit,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    settingViewModel: SettingViewModel,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -228,7 +230,8 @@ fun BusyMateApp(
                     onProfileUMKM = {
                         navController.navigate("profile_umkm")
                     },
-                    navController = navController
+                    navController = navController,
+                    viewModel = settingViewModel
                 )
             }
             composable(

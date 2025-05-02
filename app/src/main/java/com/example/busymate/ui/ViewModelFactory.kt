@@ -14,7 +14,6 @@ import com.example.busymate.ui.screen.manageproduct.ManageProductViewModel
 import com.example.busymate.ui.screen.profileumkm.ProfileUMKMViewModel
 import com.example.busymate.ui.screen.profileuser.ProfileUserViewModel
 import com.example.busymate.ui.screen.register.RegisterViewModel
-import com.example.busymate.ui.screen.setting.SettingViewModel
 
 class ViewModelFactory(private val repository: UMKMRepository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -29,8 +28,6 @@ class ViewModelFactory(private val repository: UMKMRepository) :
             return HomeViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
             return DetailViewModel(repository) as T
-        } else if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
-            return SettingViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(ProfileUMKMViewModel::class.java)) {
             return ProfileUMKMViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(CreateUMKMViewModel::class.java)) {

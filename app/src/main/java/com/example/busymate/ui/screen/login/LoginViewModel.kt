@@ -21,7 +21,7 @@ class LoginViewModel(
     var passwordError by mutableStateOf<String?>(null)
     var isLoading by mutableStateOf(false)
     var loginSuccess by mutableStateOf(false)
-    private var loginError by mutableStateOf<String?>(null)
+    var loginError by mutableStateOf<String?>(null)
 
     fun validateInput(context: Context) {
         emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

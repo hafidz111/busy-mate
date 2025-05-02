@@ -15,9 +15,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.busymate.R
 import com.example.busymate.data.UMKMRepository
 import com.example.busymate.ui.ViewModelFactory
+import com.example.busymate.ui.component.ErrorSnackbar
 import com.example.busymate.ui.component.LoginField
 import com.example.busymate.ui.theme.BusyMateTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -51,9 +54,17 @@ fun LoginScreen(
     val cardBg = MaterialTheme.colorScheme.surface
     val contentColor = MaterialTheme.colorScheme.onSurface
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     viewModel.apply {
         LaunchedEffect(loginSuccess) {
             if (loginSuccess) onLoginSuccess()
+        }
+
+        LaunchedEffect(loginError) {
+            loginError?.let {
+                snackbarHostState.showSnackbar(it)
+            }
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -69,7 +80,7 @@ fun LoginScreen(
                 elevation = CardDefaults.elevatedCardElevation(200.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = cardBg,
-                    contentColor   = contentColor
+                    contentColor = contentColor
                 )
             ) {
 
@@ -128,6 +139,13 @@ fun LoginScreen(
                     )
                 }
             }
+
+            ErrorSnackbar(
+                snackbarHostState = snackbarHostState,
+                modifier = modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(32.dp)
+            )
 
             if (isLoading) {
                 Box(

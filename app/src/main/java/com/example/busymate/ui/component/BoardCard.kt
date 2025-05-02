@@ -1,5 +1,6 @@
 package com.example.busymate.ui.component
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -75,7 +76,8 @@ fun BoardCard(
                         .size(40.dp)
                         .clip(CircleShape)
                 ) {
-                    if (board.umkm.imageUMKM.isNotEmpty()) {
+                    val imageUrl = board.umkm.imageUMKM
+                    if (imageUrl.isBlank().not() && Patterns.WEB_URL.matcher(imageUrl).matches()) {
                         AsyncImage(
                             model = board.umkm.imageUMKM,
                             contentDescription = "Profile Picture",

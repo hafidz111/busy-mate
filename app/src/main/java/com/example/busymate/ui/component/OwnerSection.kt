@@ -1,5 +1,6 @@
 package com.example.busymate.ui.component
 
+import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,8 @@ fun OwnerSection(
                 .size(36.dp)
                 .clip(CircleShape)
         ) {
-            if (user.photoUrl.isNullOrBlank()) {
+            val imageUrl = user.photoUrl
+            if (imageUrl.isBlank().not() && Patterns.WEB_URL.matcher(imageUrl).matches()) {
                 AsyncImage(
                     model = user.photoUrl,
                     contentDescription = "Profile Picture",

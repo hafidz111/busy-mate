@@ -36,7 +36,7 @@ fun ProductCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = cardBg,
-            contentColor   = contentColor
+            contentColor = contentColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {

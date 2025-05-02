@@ -102,7 +102,7 @@ fun OwnerSection(
                     Icon(
                         imageVector = if (isFollowing) Icons.Default.PersonRemove else Icons.Default.PersonAdd,
                         contentDescription = null,
-                        modifier = Modifier.size( 14.dp )
+                        modifier = Modifier.size(14.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(

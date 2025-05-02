@@ -46,8 +46,8 @@
     <string name="create_product">Buat produk</string>
     <string name="no_store_yet">Silakan buat UMKM terlebih dahulu sebelum menambahkan produk.</string>
     <string name="image_product">Foto Produk</string>
-    <string name="name_product">Nama: %1$s</string>
-    <string name="price_product">Harga: Rp%1$s</string>
+    <string name="name_product">%1$s</string>
+    <string name="price_product">Rp%1$s</string>
     <string name="edit_product">Edit Produk</string>
     <string name="delete_product">Hapus Produk</string>
     <string name="add_product">Tambah Produk</string>

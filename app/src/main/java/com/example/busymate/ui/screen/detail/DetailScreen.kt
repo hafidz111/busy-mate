@@ -152,7 +152,11 @@ fun DetailScreen(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                Text(umkm!!.location, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                Text(
+                    umkm!!.location,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -202,7 +206,11 @@ fun DetailScreen(
                 Button(
                     onClick = {
                         if (umkm?.contact.isNullOrEmpty()) {
-                            Toast.makeText(context, "Nomor WhatsApp tidak tersedia", Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                "Nomor WhatsApp tidak tersedia",
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                         } else {
                             openWhatsApp(

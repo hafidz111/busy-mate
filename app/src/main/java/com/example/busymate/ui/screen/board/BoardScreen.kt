@@ -89,8 +89,8 @@ fun BoardScreen(
                     items(sortedList) { board ->
                         BoardCard(
                             board = board,
-                            isOwner   = board.umkm.id == currentUserId,
-                            onDelete  = { viewModel.deleteBoard(board.id) },
+                            isOwner = board.umkm.id == currentUserId,
+                            onDelete = { viewModel.deleteBoard(board.id) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 8.dp)

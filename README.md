@@ -46,6 +46,12 @@ Aplikasi ini cocok digunakan oleh pelaku UMKM, komunitas pengusaha lokal, dan pe
 
 ---
 
+## 🖼️ Tampilan Aplikasi
+
+![LightMode](https://github.com/user-attachments/assets/e435e5af-2026-4497-ae3d-04b9600effab)
+
+---
+
 ## 🧪 Cara Menjalankan Aplikasi
 
 Berikut langkah-langkah penggunaan aplikasi **Busy Mate** setelah berhasil di-install:

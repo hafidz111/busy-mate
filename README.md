@@ -47,8 +47,11 @@ Aplikasi ini cocok digunakan oleh pelaku UMKM, komunitas pengusaha lokal, dan pe
 ---
 
 ## 🖼️ Tampilan Aplikasi
-
+Light Mode
 ![LightMode](https://github.com/user-attachments/assets/e435e5af-2026-4497-ae3d-04b9600effab)
+
+Dark Mode
+![DarkMode](https://github.com/user-attachments/assets/90ea6983-3b81-40dd-8f18-47c5170b3877)
 
 ---
 

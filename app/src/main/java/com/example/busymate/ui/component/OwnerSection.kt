@@ -51,7 +51,7 @@ fun OwnerSection(
                 .size(36.dp)
                 .clip(CircleShape)
         ) {
-            if (user.photoUrl.isNullOrBlank()) {
+            if (!user.photoUrl.isNullOrBlank()) {
                 AsyncImage(
                     model = user.photoUrl,
                     contentDescription = "Profile Picture",

@@ -1,5 +1,7 @@
 package com.example.busymate.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,9 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import com.example.busymate.model.Board
 import com.example.busymate.utils.formatTimestamp
@@ -46,9 +52,7 @@ fun BoardCard(
     modifier: Modifier = Modifier
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
-
-    val cardBg = MaterialTheme.colorScheme.surface
-    val contentColor = MaterialTheme.colorScheme.onSurface
+    var openImageDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier
@@ -56,12 +60,13 @@ fun BoardCard(
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = cardBg,
-            contentColor   = contentColor
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor   = MaterialTheme.colorScheme.onSurface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
+            // HEADER (avatar, nama, timestamp, menu)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -101,14 +106,10 @@ fun BoardCard(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-
                 if (isOwner) {
                     Box {
                         IconButton(onClick = { menuExpanded = true }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Menu"
-                            )
+                            Icon(Icons.Default.MoreVert, contentDescription = "Menu")
                         }
                         DropdownMenu(
                             expanded = menuExpanded,
@@ -126,26 +127,66 @@ fun BoardCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
+
+            // DESKRIPSI
             Text(text = board.description, style = MaterialTheme.typography.bodyMedium)
 
-            board.imageUrl.let { url ->
-                Spacer(modifier = Modifier.height(8.dp))
+            // GAMBAR (clickable)
+            if (board.imageUrl.isNotEmpty()) {
+                Spacer(Modifier.height(8.dp))
                 AsyncImage(
-                    model = url,
+                    model = board.imageUrl,
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { openImageDialog = true }
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
+
+            // PRIVACY
             Text(
                 text = if (board.isPrivate) "Private" else "Public",
                 style = MaterialTheme.typography.bodySmall
             )
+        }
+    }
+
+    // DIALOG FULL-SCREEN VIEW
+    if (openImageDialog) {
+        Dialog(
+            onDismissRequest = { openImageDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                AsyncImage(
+                    model = board.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Fit
+                )
+                IconButton(
+                    onClick = { openImageDialog = false },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Tutup",
+                        tint = Color.White
+                    )
+                }
+            }
         }
     }
 }

@@ -247,7 +247,6 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose { }
     }
 
-    // Board
     fun getBoard(): Flow<Result<List<Board>>> = callbackFlow {
         database.child("board").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -428,6 +427,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                     trySendBlocking(Result.success(UserProfile(userId, name, photo)))
                     close()
                 }
+
                 override fun onCancelled(err: DatabaseError) {
                     trySendBlocking(Result.failure(err.toException()))
                     close()
@@ -436,22 +436,24 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose { }
     }
 
-    fun isFollowing(currentUserId: String, targetUserId: String): Flow<Result<Boolean>> = callbackFlow {
-        database.child("following")
-            .child(currentUserId)
-            .child(targetUserId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snap: DataSnapshot) {
-                    trySendBlocking(Result.success(snap.exists()))
-                    close()
-                }
-                override fun onCancelled(err: DatabaseError) {
-                    trySendBlocking(Result.failure(err.toException()))
-                    close()
-                }
-            })
-        awaitClose { }
-    }
+    fun isFollowing(currentUserId: String, targetUserId: String): Flow<Result<Boolean>> =
+        callbackFlow {
+            database.child("following")
+                .child(currentUserId)
+                .child(targetUserId)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snap: DataSnapshot) {
+                        trySendBlocking(Result.success(snap.exists()))
+                        close()
+                    }
+
+                    override fun onCancelled(err: DatabaseError) {
+                        trySendBlocking(Result.failure(err.toException()))
+                        close()
+                    }
+                })
+            awaitClose { }
+        }
 
     fun followUser(currentUserId: String, targetUserId: String): Flow<Result<Unit>> = callbackFlow {
         val ref = database.child("following")
@@ -469,21 +471,22 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
         awaitClose { }
     }
 
-    fun unfollowUser(currentUserId: String, targetUserId: String): Flow<Result<Unit>> = callbackFlow {
-        val ref = database.child("following")
-            .child(currentUserId)
-            .child(targetUserId)
-        ref.removeValue()
-            .addOnSuccessListener {
-                trySendBlocking(Result.success(Unit))
-                close()
-            }
-            .addOnFailureListener { e ->
-                trySendBlocking(Result.failure(e))
-                close()
-            }
-        awaitClose { }
-    }
+    fun unfollowUser(currentUserId: String, targetUserId: String): Flow<Result<Unit>> =
+        callbackFlow {
+            val ref = database.child("following")
+                .child(currentUserId)
+                .child(targetUserId)
+            ref.removeValue()
+                .addOnSuccessListener {
+                    trySendBlocking(Result.success(Unit))
+                    close()
+                }
+                .addOnFailureListener { e ->
+                    trySendBlocking(Result.failure(e))
+                    close()
+                }
+            awaitClose { }
+        }
 
     fun getFollowingList(userId: String): Flow<Result<List<String>>> = callbackFlow {
         database.child("following")
@@ -495,6 +498,7 @@ class UMKMRepository(private val firebaseAuth: FirebaseAuth) {
                     trySendBlocking(Result.success(list))
                     close()
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                     trySendBlocking(Result.failure(error.toException()))
                     close()

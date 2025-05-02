@@ -1,6 +1,5 @@
 package com.example.busymate.ui.component
 
-import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,8 +51,7 @@ fun OwnerSection(
                 .size(36.dp)
                 .clip(CircleShape)
         ) {
-            val imageUrl = user.photoUrl
-            if (imageUrl.isBlank().not() && Patterns.WEB_URL.matcher(imageUrl).matches()) {
+            if (!user.photoUrl.isNullOrBlank()) {
                 AsyncImage(
                     model = user.photoUrl,
                     contentDescription = "Profile Picture",
@@ -104,7 +102,7 @@ fun OwnerSection(
                     Icon(
                         imageVector = if (isFollowing) Icons.Default.PersonRemove else Icons.Default.PersonAdd,
                         contentDescription = null,
-                        modifier = Modifier.size( 14.dp )
+                        modifier = Modifier.size(14.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(

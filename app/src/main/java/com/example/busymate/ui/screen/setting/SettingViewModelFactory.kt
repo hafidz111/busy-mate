@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.busymate.data.UMKMRepository
 
-class SettingViewModelFactory(private val repository: UMKMRepository, private val pref: SettingPreferences) :
+class SettingViewModelFactory(
+    private val repository: UMKMRepository,
+    private val pref: SettingPreferences
+) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

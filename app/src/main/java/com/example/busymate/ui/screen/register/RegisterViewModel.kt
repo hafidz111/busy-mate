@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(private val repository: UMKMRepository): ViewModel() {
+class RegisterViewModel(
+    private val repository: UMKMRepository
+) : ViewModel() {
     var email by mutableStateOf("")
     var password by mutableStateOf("")
     var name by mutableStateOf("")

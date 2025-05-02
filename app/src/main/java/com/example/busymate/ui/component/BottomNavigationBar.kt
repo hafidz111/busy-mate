@@ -82,11 +82,11 @@ fun BottomNavigationBar(
                 },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor   = primary,
+                    selectedIconColor = primary,
                     unselectedIconColor = onSurfaceVariant,
-                    selectedTextColor   = primary,
+                    selectedTextColor = primary,
                     unselectedTextColor = onSurfaceVariant,
-                    indicatorColor      = primary.copy(alpha = 0.2f)
+                    indicatorColor = primary.copy(alpha = 0.2f)
                 )
             )
         }

@@ -211,7 +211,7 @@ fun ProfileUserScreen(
                             },
                         colors = CardDefaults.cardColors(
                             containerColor = cardBg,
-                            contentColor   = contentColor
+                            contentColor = contentColor
                         ),
                         elevation = CardDefaults.cardElevation(4.dp),
                         shape = RoundedCornerShape(12.dp)
@@ -246,7 +246,7 @@ fun ProfileUserScreen(
                             .padding(horizontal = 16.dp, vertical = 4.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = cardBg,
-                            contentColor   = contentColor
+                            contentColor = contentColor
                         ),
                         elevation = CardDefaults.cardElevation(2.dp),
                         shape = RoundedCornerShape(12.dp)

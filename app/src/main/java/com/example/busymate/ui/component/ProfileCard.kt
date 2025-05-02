@@ -51,7 +51,7 @@ fun ProfileCard(navController: NavController) {
             },
         colors = CardDefaults.cardColors(
             containerColor = cardBg,
-            contentColor   = contentColor
+            contentColor = contentColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
@@ -99,7 +99,7 @@ fun ProfileCard(navController: NavController) {
                     color = Color.Gray
                 )
             }
-            }
+        }
 
     }
 }

@@ -30,7 +30,6 @@ class DetailViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    //fitur follow
     private val _ownerUser = MutableStateFlow<UserProfile?>(null)
     val ownerUser: StateFlow<UserProfile?> = _ownerUser
 
@@ -70,7 +69,7 @@ class DetailViewModel(
 
     fun fetchOwner(userId: String) = viewModelScope.launch {
         repository.getUserProfile(userId)
-            .catch {  }
+            .catch { }
             .collect { res ->
                 res.onSuccess { _ownerUser.value = it }
             }

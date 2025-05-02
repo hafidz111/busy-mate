@@ -66,7 +66,6 @@ fun BoardCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            // HEADER (avatar, nama, timestamp, menu)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -129,10 +128,8 @@ fun BoardCard(
 
             Spacer(Modifier.height(8.dp))
 
-            // DESKRIPSI
             Text(text = board.description, style = MaterialTheme.typography.bodyMedium)
 
-            // GAMBAR (clickable)
             if (board.imageUrl.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
                 AsyncImage(
@@ -149,7 +146,6 @@ fun BoardCard(
 
             Spacer(Modifier.height(8.dp))
 
-            // PRIVACY
             Text(
                 text = if (board.isPrivate) "Private" else "Public",
                 style = MaterialTheme.typography.bodySmall
@@ -157,7 +153,6 @@ fun BoardCard(
         }
     }
 
-    // DIALOG FULL-SCREEN VIEW
     if (openImageDialog) {
         Dialog(
             onDismissRequest = { openImageDialog = false },

@@ -1,6 +1,6 @@
 # 🧩 Busy Mate
 
-**Busy Mate** adalah aplikasi Android yang dirancang untuk menghubungkan pemilik UMKM dalam satu platform kolaboratif. Aplikasi ini memungkinkan pengguna untuk saling follow, membagikan update bisnis, serta menampilkan produk yang ditawarkan oleh masing-masing UMKM. Pengguna juga dapat memposting produk atau hal lainnya dan dapat dilihat oleh followers atau hanya dilihat oleh dirinya sendiri (public/private).
+**Busy Mate** adalah aplikasi Android yang dirancang untuk menghubungkan pemilik UMKM dalam satu platform kolaboratif. Aplikasi ini memungkinkan pengguna untuk saling follow, membagikan update bisnis, serta menampilkan produk yang ditawarkan oleh masing-masing UMKM. Pengguna juga dapat memposting produk atau hal lainnya dan dapat dilihat oleh semua user atau hanya dilihat oleh followers (public/private).
 
 ---
 
@@ -26,11 +26,11 @@ Aplikasi ini cocok digunakan oleh pelaku UMKM, komunitas pengusaha lokal, dan pe
   Setiap UMKM memiliki halaman profil lengkap dengan informasi usaha dan daftar produk.
 
 - 🤝 **Follow Sistem**  
-  Pengguna dapat mengikuti UMKM lain untuk mendapatkan update eksklusif.
+  Pengguna dapat mengikuti UMKM lain dan dapat melihat postingan private pengguna lain.
 
 - 🗒️ **Post Public / Private**  
-  - **Public:** postingan dapat dilihat oleh followers.  
-  - **Private:** hanya bisa dilihat oleh pembuat postingan.
+  - **Public:** postingan dapat dilihat oleh semua user.  
+  - **Private:** hanya bisa dilihat oleh followers.
 
 - 🖼️ **Gambar Thumbnail & Preview Fullscreen**  
   Setiap postingan bisa dilengkapi dengan gambar yang bisa diperbesar dalam dialog khusus.
@@ -76,8 +76,8 @@ Berikut langkah-langkah penggunaan aplikasi **Busy Mate** setelah berhasil di-in
 
 6. 📝 **Posting di Board Post**  
    Setiap UMKM bisa membuat postingan berupa teks dan gambar. Postingan bisa diatur sebagai:
-   - **Public** – Dapat dilihat oleh semua followers  
-   - **Private** – Hanya dapat dilihat oleh pembuat postingan (pemilik UMKM itu sendiri)  
+   - **Public** – Dapat dilihat oleh semua user
+   - **Private** – Hanya dapat dilihat oleh followers 
 
 Fitur ini memungkinkan pelaku UMKM membagikan update, promosi, atau informasi penting kepada pengikut mereka secara fleksibel.
 

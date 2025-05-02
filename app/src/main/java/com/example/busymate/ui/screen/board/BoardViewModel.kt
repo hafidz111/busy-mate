@@ -42,7 +42,8 @@ class BoardViewModel(
                 val filtered = allBoards.filter { board ->
                     when {
                         board.umkm.id == currentUserId -> true
-                        !board.isPrivate && following.contains(board.umkm.id) -> true
+                        !board.isPrivate -> true
+                        board.isPrivate && following.contains(board.umkm.id) -> true
                         else -> false
                     }
                 }

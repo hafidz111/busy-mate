@@ -48,6 +48,8 @@ fun LoginScreen(
     )
 ) {
     val context = LocalContext.current
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
 
     viewModel.apply {
         LaunchedEffect(loginSuccess) {
@@ -57,7 +59,6 @@ fun LoginScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             Card(
                 modifier = modifier
-                    .padding(top = 80.dp)
                     .fillMaxSize(),
                 shape = RoundedCornerShape(
                     topStart = 20.dp,
@@ -67,7 +68,8 @@ fun LoginScreen(
                 ),
                 elevation = CardDefaults.elevatedCardElevation(200.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = cardBg,
+                    contentColor   = contentColor
                 )
             ) {
 
@@ -75,7 +77,7 @@ fun LoginScreen(
                     modifier = modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .background(Color.White)
+                        .background(cardBg)
                 ) {
 
                     Image(
